@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>tomato.png</file>
+        <file>button_close.png</file>
+    </qresource>
+</RCC>

@@ -21,4 +21,4 @@ HEADERS  += win.h \
 FORMS    += win.ui
 
 RESOURCES += \
-    media/icon.qrc
+    media/icons.qrc

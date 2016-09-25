@@ -41,11 +41,11 @@ private:
     Timer timer;
     QString soundFile = "/home/rtkt/src/Pomodoro/media/bell.ogg";
     QSystemTrayIcon *trayIcon;
-    bool isModalOpened = false;
     QMenu *trayIconMenu;
     QAction *exitAction;
+    bool isModalOpened = false;
 
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
 };
 
 #endif // WIN_H

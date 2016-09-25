@@ -9,7 +9,8 @@ Win::Win(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowIcon(QIcon(":/icon/tomato.png"));
+    setWindowIcon(QIcon(":/icons/tomato.png"));
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 
     player = new QMediaPlayer(this);
     player->setMedia(QUrl::fromLocalFile(soundFile));
@@ -20,8 +21,10 @@ Win::Win(QWidget *parent) :
     trayIconMenu->addAction(exitAction);
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setIcon(QIcon(":/icon/tomato.png"));
+    trayIcon->setIcon(QIcon(":/icons/tomato.png"));
     trayIcon->show();
+
+    ui->moveField->setMouseTracking(true);
 
     connect(&timer, SIGNAL(error()), SLOT(onError()));
     connect(&timer, SIGNAL(started(enum Timer::TIMER_STATE, int)), SLOT(onStart(enum Timer::TIMER_STATE,int)));
@@ -33,6 +36,11 @@ Win::Win(QWidget *parent) :
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(onIconActivation(QSystemTrayIcon::ActivationReason)));
     connect(exitAction, &QAction::triggered, [=]() {
         QCoreApplication::exit();
+    });
+    connect(ui->closeBtn, &QPushButton::clicked, [=]() {
+        if(!isModalOpened) {
+            hide();
+        }
     });
 }
 
