@@ -1,8 +1,12 @@
 #ifndef WIN_H
 #define WIN_H
 
+#include <QAction>
+#include <QCloseEvent>
 #include <QMainWindow>
 #include <QMediaPlayer>
+#include <QMenu>
+#include <QSystemTrayIcon>
 
 #include "timer.h"
 
@@ -13,8 +17,6 @@ class Win;
 class Win : public QMainWindow
 {
     Q_OBJECT
-
-    QString soundFile = "/home/rtkt/Misc/Packages/Fresh and Clean/stereo/dialog-information.ogg";
 
 public:
     explicit Win(QWidget *parent = 0);
@@ -30,10 +32,20 @@ public slots:
     void onZeroCount();
     void onError();
 
+private slots:
+    void onIconActivation(QSystemTrayIcon::ActivationReason r);
+
 private:
     Ui::Win *ui;
 
     Timer timer;
+    QString soundFile = "/home/rtkt/src/Pomodoro/media/bell.ogg";
+    QSystemTrayIcon *trayIcon;
+    bool isModalOpened = false;
+    QMenu *trayIconMenu;
+    QAction *exitAction;
+
+    void closeEvent(QCloseEvent *event);
 };
 
 #endif // WIN_H

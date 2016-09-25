@@ -19,3 +19,6 @@ HEADERS  += win.h \
     timer.h
 
 FORMS    += win.ui
+
+RESOURCES += \
+    media/icon.qrc
