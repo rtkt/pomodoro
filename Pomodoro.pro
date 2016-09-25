@@ -5,7 +5,6 @@
 #-------------------------------------------------
 
 QT       += core gui multimedia
-LIBS += -L/usr/lib64/gstreamer-1.0 -lgstautodetect
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Pomodoro
