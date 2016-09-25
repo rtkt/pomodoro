@@ -7,7 +7,11 @@ Win::Win(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(&timer, SIGNAL(error()), this, SLOT(onError()), Qt::AutoConnection);
+    player = new QMediaPlayer(this);
+    player->setMedia(QUrl::fromLocalFile(soundFile));
+    player->setVolume(100);
+
+    connect(&timer, SIGNAL(error()), SLOT(onError()));
     connect(&timer, SIGNAL(started(enum Timer::TIMER_STATE, int)), SLOT(onStart(enum Timer::TIMER_STATE,int)));
     connect(&timer, SIGNAL(stopped()), SLOT(onStop()));
     connect(&timer, SIGNAL(tick(int, int)), SLOT(onTick(int, int)));
@@ -24,6 +28,7 @@ Win::~Win()
 void Win::onError()
 {
     ui->Msg->setText(tr("Something went wrong..."));
+    player->play();
 }
 
 void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)
@@ -60,9 +65,10 @@ void Win::onTick(int minutes, int seconds)
 void Win::onTimeout(int count)
 {
     ui->Count->setText(QString::number(count) + tr(" pomodoros"));
+    player->play();
 }
 
 void Win::onZeroCount()
 {
-    onTimeout(0);
+    ui->Count->setText(QString::number(0) + tr(" pomodoros"));
 }

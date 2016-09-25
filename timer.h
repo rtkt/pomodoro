@@ -8,7 +8,7 @@ class Timer : public QObject
 {
     Q_OBJECT
 
-    int work = 25;
+    int work = 1;
     int pause = 5;
     int bigPause = 15;
     bool autoWorking = false;

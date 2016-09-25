@@ -20,7 +20,7 @@ void Timer::start(bool pause)
         st = TIMER_WORKING;
         minutes = work;
     } else {
-        if(count % 4 == 0) {
+        if(count % 4 == 0 && count != 0) {
             st = TIMER_BIGPAUSE;
             minutes = bigPause;
         } else {
@@ -53,11 +53,11 @@ void Timer::timerEvent(QTimerEvent *event)
     if(minutes == 0 && seconds == 1) {
         enum TIMER_STATE prevState = st;
         seconds--;
-        count++;
         emit timeout(count);
         stop();
         if(prevState == TIMER_WORKING) {
             start(true);
+            count++;
         } else if(autoWorking == true) {
             start();
         }

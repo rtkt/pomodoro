@@ -2,6 +2,7 @@
 #define WIN_H
 
 #include <QMainWindow>
+#include <QMediaPlayer>
 
 #include "timer.h"
 
@@ -13,9 +14,13 @@ class Win : public QMainWindow
 {
     Q_OBJECT
 
+    QString soundFile = "/home/rtkt/Misc/Packages/Fresh and Clean/stereo/dialog-information.ogg";
+
 public:
     explicit Win(QWidget *parent = 0);
     ~Win();
+
+    QMediaPlayer *player;
 
 public slots:
     void onTick(int minutes, int seconds);
