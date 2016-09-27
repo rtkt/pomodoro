@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>120</width>
-    <height>167</height>
+    <height>169</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,24 +15,30 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="closeBtn">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <widget class="QWidget" name="moveField" native="true"/>
-      <widget class="QPushButton" name="closeBtn">
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="media/icons.qrc">
-         <normaloff>:/icons/button_close.png</normaloff>:/icons/button_close.png</iconset>
-       </property>
-      </widget>
+      <property name="maximumSize">
+       <size>
+        <width>22</width>
+        <height>22</height>
+       </size>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="media/icons.qrc">
+        <normaloff>:/icons/button_close.png</normaloff>:/icons/button_close.png</iconset>
+      </property>
      </widget>
     </item>
-    <item row="1" column="0">
+    <item row="1" column="0" colspan="2">
      <widget class="QLabel" name="Time">
       <property name="font">
        <font>
@@ -48,7 +54,7 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="2" column="0" colspan="2">
      <widget class="QLabel" name="Count">
       <property name="text">
        <string>0 pomodoros</string>
@@ -58,20 +64,20 @@
       </property>
      </widget>
     </item>
-    <item row="3" column="0">
+    <item row="4" column="0" colspan="2">
+     <widget class="QPushButton" name="Btn">
+      <property name="text">
+       <string>Start</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="2">
      <widget class="QLabel" name="Msg">
       <property name="text">
        <string>Stopped</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QPushButton" name="Btn">
-      <property name="text">
-       <string>Start</string>
       </property>
      </widget>
     </item>

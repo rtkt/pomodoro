@@ -24,8 +24,6 @@ Win::Win(QWidget *parent) :
     trayIcon->setIcon(QIcon(":/icons/tomato.png"));
     trayIcon->show();
 
-    ui->moveField->setMouseTracking(true);
-
     connect(&timer, SIGNAL(error()), SLOT(onError()));
     connect(&timer, SIGNAL(started(enum Timer::TIMER_STATE, int)), SLOT(onStart(enum Timer::TIMER_STATE,int)));
     connect(&timer, SIGNAL(stopped()), SLOT(onStop()));
@@ -56,6 +54,33 @@ void Win::closeEvent(QCloseEvent *event)
         hide();
     }
     event->ignore();
+}
+
+void Win::mouseMoveEvent(QMouseEvent *event)
+{
+    if((event->buttons() && Qt::LeftButton) && moving) {
+        move(x() + (event->globalX() - lastPos->x()), y() + (event->globalY() - lastPos->y()));
+        lastPos->setX(event->globalX());
+        lastPos->setY(event->globalY());
+    }
+}
+
+void Win::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton) {
+        moving = true;
+        lastPos = new QPoint();
+        lastPos->setX(event->globalX());
+        lastPos->setY(event->globalY());
+    }
+}
+
+void Win::mouseReleaseEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton && moving) {
+        moving = false;
+        delete lastPos;
+    }
 }
 
 void Win::onError()

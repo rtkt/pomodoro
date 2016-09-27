@@ -6,6 +6,8 @@
 #include <QMainWindow>
 #include <QMediaPlayer>
 #include <QMenu>
+#include <QMouseEvent>
+#include <QPoint>
 #include <QSystemTrayIcon>
 
 #include "timer.h"
@@ -43,9 +45,14 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     QAction *exitAction;
+    QPoint *lastPos;
     bool isModalOpened = false;
+    bool moving = false;
 
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 };
 
 #endif // WIN_H
