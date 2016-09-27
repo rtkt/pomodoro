@@ -9,6 +9,17 @@ void Timer::onClick()
     }
 }
 
+void Timer::onSetup(int work, int pause, int bigPause, bool autoWorking, QString filePath, bool onTop)
+{
+    this->work = work;
+    this->pause = pause;
+    this->bigPause = bigPause;
+    this->autoWorking = autoWorking;
+
+    (void)filePath;
+    (void)onTop;
+}
+
 void Timer::start(bool pause)
 {
     if(st != TIMER_IDLE) {

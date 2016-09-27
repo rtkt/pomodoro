@@ -10,7 +10,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Pomodoro
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         win.cpp \
     timer.cpp
