@@ -16,13 +16,13 @@ Win::Win(QWidget *parent) :
     settings = new QSettings("rtkt", "Pomodoro");
 
     connect(ui->Btn, SIGNAL(clicked()), &timer, SLOT(onClick()));
-    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool)),
-            SLOT(onSetup(int,int,int,bool,QString,bool)));
+    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, bool)),
+            SLOT(onSetup(int, int, int, bool, QString, bool, bool)));
     connect(ui->closeBtn, &QPushButton::clicked, [=]() {
-        if(!isModalOpened) {
-            hide();
-        }
+        hide();
     });
+
+//    lang = "en-US";
 
     createTrayIcon();
     connectTimer();
@@ -44,21 +44,28 @@ void Win::connectTimer()
     connect(&timer, SIGNAL(tick(int, int)), SLOT(onTick(int, int)));
     connect(&timer, SIGNAL(timeout(int)), SLOT(onTimeout(int)));
     connect(&timer, SIGNAL(zeroCount()), SLOT(onZeroCount()));
-    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool)),
-            &timer, SLOT(onSetup(int, int, int, bool, QString, bool)));
+    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, bool)),
+            &timer, SLOT(onSetup(int, int, int, bool, QString, bool, bool)));
 }
 
 void Win::createTrayIcon()
 {
     trayIconMenu = new QMenu();
     exitAction = new QAction(tr("Exit"), (QObject*)trayIconMenu);
+    settingsAction = new QAction(tr("Settings"), (QObject*)trayIconMenu);
+    trayIconMenu->addAction(settingsAction);
     trayIconMenu->addAction(exitAction);
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->setIcon(QIcon(":/icons/tomato.png"));
     trayIcon->show();
 
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(onIconActivation(QSystemTrayIcon::ActivationReason)));
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            SLOT(onIconActivation(QSystemTrayIcon::ActivationReason)));
+    connect(settingsAction, &QAction::triggered, [=]() {
+        settingsWin = new Settings(this);
+        settingsWin->show();
+    });
     connect(exitAction, &QAction::triggered, [=]() {
         QCoreApplication::exit();
     });
@@ -66,9 +73,7 @@ void Win::createTrayIcon()
 
 void Win::closeEvent(QCloseEvent *event)
 {
-    if(!isModalOpened) {
-        hide();
-    }
+    hide();
     event->ignore();
 }
 
@@ -76,21 +81,26 @@ void Win::getSettings(bool apply)
 {
     int work = settings->value("workingTime", 25).toInt();
     int pause = settings->value("pauseTime", 5).toInt();
-    int bigPause = settings->value("bigPauseTime", 25).toInt();
+    int bigPause = settings->value("bigPauseTime", 15).toInt();
     bool autoWorking = settings->value("autoWorking", false).toBool();
-    QString path = settings->value("pathToSound", "/usr/share/sounds/pomodoro/bell.ogg").toString();
+    QString path = settings->value("pathToSoundFile",
+                                   "/usr/share/sounds/pomodoro/bell.ogg").toString();
+//    QString lang = settings->value("language", "en-US").toString();
     bool onTop = settings->value("alwaysOnTop", true).toBool();
     if(apply) {
-        emit newSettings(work, pause, bigPause, autoWorking, path, onTop);
+        emit newSettings(work, pause, bigPause,
+                         autoWorking, path, onTop, false);
     } else {
-        emit gotSettings(work, pause, bigPause, autoWorking, path, onTop);
+        emit gotSettings(work, pause, bigPause,
+                         autoWorking, path, onTop);
     }
 }
 
 void Win::mouseMoveEvent(QMouseEvent *event)
 {
     if((event->buttons() && Qt::LeftButton) && moving) {
-        move(x() + (event->globalX() - lastPos->x()), y() + (event->globalY() - lastPos->y()));
+        move(x() + (event->globalX() - lastPos->x()),
+             y() + (event->globalY() - lastPos->y()));
         lastPos->setX(event->globalX());
         lastPos->setY(event->globalY());
     }
@@ -140,12 +150,26 @@ void Win::onIconActivation(QSystemTrayIcon::ActivationReason r)
     }
 }
 
-void Win::onSetup(int work, int pause, int bigPause, bool autoWorking, QString filePath, bool onTop)
+void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
+                  QString filePath, bool onTop, bool save)
 {
-    if(onTop) {
-        setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-    } else {
-        setWindowFlags(Qt::FramelessWindowHint);
+    if(save) {
+        settings->setValue("workingTime", work);
+        settings->setValue("pauseTime", pause);
+        settings->setValue("bigPauseTime", bigPause);
+        settings->setValue("autoWorking", autoWorking);
+        settings->setValue("pathToSoundFile", filePath);
+//        settings->setValue("language");
+        settings->setValue("alwaysOnTop", onTop);
+    }
+
+    if(init) {
+        if(onTop) {
+            setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+        } else {
+            setWindowFlags(Qt::FramelessWindowHint);
+        }
+        init = false;
     }
     player->setMedia(QUrl::fromLocalFile(filePath));
 
@@ -153,6 +177,8 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking, QString f
     (void)pause;
     (void)bigPause;
     (void)autoWorking;
+
+//    (void)lang;
 }
 
 void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)
@@ -183,7 +209,8 @@ void Win::onStop()
 
 void Win::onTick(int minutes, int seconds)
 {
-    ui->Time->setText(QString::number(minutes) + ":" + QString::number(seconds));
+    ui->Time->setText(QString::number(minutes) + ":" +
+                      QString::number(seconds));
 }
 
 void Win::onTimeout(int count)

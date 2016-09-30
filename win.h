@@ -11,6 +11,7 @@
 #include <QSettings>
 #include <QSystemTrayIcon>
 
+#include "settings.h"
 #include "timer.h"
 
 namespace Ui {
@@ -32,15 +33,18 @@ public slots:
     void onStop();
     void onZeroCount();
     void onError();
-    void onSetup(int work, int pause, int bigPause, bool autoWorking, QString filePath, bool onTop);
+    void onSetup(int work, int pause, int bigPause, bool autoWorking,
+                 QString filePath, bool onTop, bool save);
+    void getSettings(bool apply);
 
 private slots:
     void onIconActivation(QSystemTrayIcon::ActivationReason r);
-    void getSettings(bool apply);
 
 signals:
-    void newSettings(int work, int pause, int bigPause, bool autoWorking, QString filePath, bool onTop);
-    void gotSettings(int work, int pause, int bigPause, bool autoWorking, QString filePath, bool onTop);
+    void newSettings(int work, int pause, int bigPause, bool autoWorking,
+                     QString filePath, bool onTop, bool save);
+    void gotSettings(int work, int pause, int bigPause, bool autoWorking,
+                     QString filePath, bool onTop);
 
 private:
     Ui::Win *ui;
@@ -49,11 +53,14 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
     QAction *exitAction;
+    QAction *settingsAction;
     QPoint *lastPos;
     QSettings *settings;
     QMediaPlayer *player;
-    bool isModalOpened = false;
+    Settings *settingsWin;
     bool moving = false;
+    bool init = true;
+//    QString lang;
 
     void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;

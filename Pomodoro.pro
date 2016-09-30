@@ -12,12 +12,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         win.cpp \
-    timer.cpp
+    timer.cpp \
+    settings.cpp
 
 HEADERS  += win.h \
-    timer.h
+    timer.h \
+    settings.h
 
-FORMS    += win.ui
+FORMS    += win.ui \
+    settings.ui
 
 RESOURCES += \
     media/icons.qrc
