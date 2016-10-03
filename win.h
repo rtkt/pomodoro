@@ -2,6 +2,7 @@
 #define WIN_H
 
 #include <QAction>
+#include <QCloseEvent>
 #include <QMainWindow>
 #include <QMediaPlayer>
 #include <QMenu>
@@ -31,7 +32,7 @@ public slots:
     void onZeroCount();
     void onError();
     void onSetup(int work, int pause, int bigPause, bool autoWorking,
-                 QString filePath, bool onTop, bool save);
+                 QString filePath, bool onTop, QByteArray geometry, bool save);
     void getSettings(bool apply);
     void beforeTimeout();
     void checkFile(QString file);
@@ -41,7 +42,7 @@ private slots:
 
 signals:
     void newSettings(int work, int pause, int bigPause, bool autoWorking,
-                     QString filePath, bool onTop, bool save);
+                     QString filePath, bool onTop, QByteArray geometry, bool save);
     void gotSettings(int work, int pause, int bigPause, bool autoWorking,
                      QString filePath, bool onTop);
     void fileIsPlayable(bool t);
@@ -54,7 +55,6 @@ private:
     QMenu *trayIconMenu;
     QAction *exitAction;
     QAction *settingsAction;
-//    QPoint *lastPos;
     QMediaPlayer *player = nullptr;
     Settings *settingsWin;
     QString path;
@@ -66,7 +66,7 @@ private:
         int y;
     } lastPos;
 
-//    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
+    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;

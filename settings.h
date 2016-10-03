@@ -46,7 +46,8 @@ public slots:
 signals:
     void changedSettings(int work, int pause, int bigPause,
                          bool autoWorking, QString filePath,
-                         bool onTop, bool save);
+                         bool onTop, QByteArray geom,
+                         bool save);
     void getSettings(bool apply);
     void checkFile(QString path);
 };

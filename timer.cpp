@@ -11,16 +11,24 @@ void Timer::onClick()
 
 void Timer::onSetup(int work, int pause, int bigPause,
                     bool autoWorking, QString filePath,
-                    bool onTop, bool save)
+                    bool onTop, QByteArray geometry, bool save)
 {
-    this->work = work;
-    this->pause = pause;
-    this->bigPause = bigPause;
-    this->autoWorking = autoWorking;
+    if(this->work != work || this->pause != pause || this->bigPause != bigPause) {
+        if(st != TIMER_IDLE) {
+            stop(false);
+        }
+        this->work = work;
+        this->pause = pause;
+        this->bigPause = bigPause;
+    }
+    if(this->autoWorking != autoWorking) {
+        this->autoWorking = autoWorking;
+    }
 
     (void)filePath;
     (void)onTop;
     (void)save;
+    (void)geometry;
 //    (void)lang;
 }
 

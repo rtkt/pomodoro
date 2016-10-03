@@ -1,6 +1,7 @@
 #include "win.h"
 #include "ui_win.h"
 
+#include <QCoreApplication>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QSettings>
@@ -13,16 +14,12 @@ Win::Win(QWidget *parent) :
 
     setWindowIcon(QIcon(":/icons/tomato.png"));
 
-//    settings = new QSettings("rtkt", "Pomodoro");
-
     connect(ui->Btn, SIGNAL(clicked()), &timer, SLOT(onClick()));
-    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, bool)),
-            SLOT(onSetup(int, int, int, bool, QString, bool, bool)));
+    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, bool)),
+            SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, bool)));
     connect(ui->closeBtn, &QPushButton::clicked, [=]() {
-        hide();
+        close();
     });
-
-//    lang = "en-US";
 
     createTrayIcon();
     connectTimer();
@@ -60,8 +57,8 @@ void Win::connectTimer()
     connect(&timer, SIGNAL(tick(int, int)), SLOT(onTick(int, int)));
     connect(&timer, SIGNAL(timeout(int)), SLOT(onTimeout(int)));
     connect(&timer, SIGNAL(zeroCount()), SLOT(onZeroCount()));
-    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, bool)),
-            &timer, SLOT(onSetup(int, int, int, bool, QString, bool, bool)));
+    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, bool)),
+            &timer, SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, bool)));
     connect(&timer, SIGNAL(beforeTimeout()), SLOT(beforeTimeout()));
 }
 
@@ -84,15 +81,17 @@ void Win::createTrayIcon()
         settingsWin->show();
     });
     connect(exitAction, &QAction::triggered, [=]() {
-        close();
+        QSettings s("rtkt", "Pomodoro");
+        s.setValue("windowGeometry", saveGeometry());
+        QCoreApplication::exit();
     });
 }
 
-//void Win::closeEvent(QCloseEvent *event)
-//{
-//    hide();
-//    event->ignore();
-//}
+void Win::closeEvent(QCloseEvent *event)
+{
+    hide();
+    event->ignore();
+}
 
 void Win::getSettings(bool apply)
 {
@@ -103,11 +102,12 @@ void Win::getSettings(bool apply)
     bool autoWorking = settings->value("autoWorking", false).toBool();
     QString path = settings->value("pathToSoundFile",
                                    "/usr/share/sounds/pomodoro/bell.ogg").toString();
+    QByteArray geometry = settings->value("windowGeometry").toByteArray();
 //    QString lang = settings->value("language", "en-US").toString();
     bool onTop = settings->value("alwaysOnTop", true).toBool();
     if(apply) {
         emit newSettings(work, pause, bigPause,
-                         autoWorking, path, onTop, false);
+                         autoWorking, path, onTop, geometry, false);
     } else {
         emit gotSettings(work, pause, bigPause,
                          autoWorking, path, onTop);
@@ -157,7 +157,7 @@ void Win::onIconActivation(QSystemTrayIcon::ActivationReason r)
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::DoubleClick:
         if(!isHidden()) {
-            hide();
+            close();
         } else {
             show();
         }
@@ -171,7 +171,7 @@ void Win::onIconActivation(QSystemTrayIcon::ActivationReason r)
 }
 
 void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
-                  QString filePath, bool onTop, bool save)
+                  QString filePath, bool onTop, QByteArray geometry, bool save)
 {
     if(save) {
         QSettings *settings = new QSettings("rtkt", "Pomodoro", this);
@@ -194,9 +194,9 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
         init = false;
     }
     path = filePath;
-
-
-//    (void)lang;
+    if(geometry != QByteArray()) {
+        restoreGeometry(geometry);
+    }
 }
 
 void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)

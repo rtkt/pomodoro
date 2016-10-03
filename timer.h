@@ -28,7 +28,7 @@ public:
 public slots:
     void onClick();
     void onSetup(int work, int pause, int bigPause, bool autoWorking,
-                 QString filePath, bool onTop, bool save);
+                 QString filePath, bool onTop, QByteArray geometry, bool save);
 
 signals:
     void tick(int minutes, int seconds);

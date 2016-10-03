@@ -18,8 +18,8 @@ Settings::Settings(QWidget *parent) :
 
     connect(win, SIGNAL(gotSettings(int,int,int,bool,QString,bool)),
             SLOT(gotSettings(int,int,int,bool,QString,bool)));
-    connect(this, SIGNAL(changedSettings(int,int,int,bool,QString,bool,bool)),
-            win, SIGNAL(newSettings(int,int,int,bool,QString,bool,bool)));
+    connect(this, SIGNAL(changedSettings(int,int,int,bool,QString,bool,QByteArray,bool)),
+            win, SIGNAL(newSettings(int,int,int,bool,QString,bool,QByteArray,bool)));
     connect(this, SIGNAL(getSettings(bool)), win, SLOT(getSettings(bool)));
     connect(ui->buttonBox, SIGNAL(accepted()), SLOT(accepted()));
     connect(this, SIGNAL(checkFile(QString)), win, SLOT(checkFile(QString)));
@@ -85,7 +85,7 @@ void Settings::accepted()
             onTop != ui->onTop->isChecked()) {
         emit changedSettings(ui->work->value(), ui->pause->value(),
                              ui->bigPause->value(), ui->autoStart->isChecked(),
-                             ui->file->text(), ui->onTop->isChecked(), true);
+                             ui->file->text(), ui->onTop->isChecked(), QByteArray(), true);
     }
     close();
 }
