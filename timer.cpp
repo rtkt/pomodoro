@@ -77,6 +77,9 @@ void Timer::timerEvent(QTimerEvent *event)
             start();
         }
         return;
+    } else if(minutes == 0 && seconds == 5) {
+        emit beforeTimeout();
+        seconds--;
     } else if(seconds == 0) {
         seconds = 59;
         minutes--;

@@ -2,13 +2,10 @@
 #define WIN_H
 
 #include <QAction>
-#include <QCloseEvent>
 #include <QMainWindow>
 #include <QMediaPlayer>
 #include <QMenu>
 #include <QMouseEvent>
-#include <QPoint>
-#include <QSettings>
 #include <QSystemTrayIcon>
 
 #include "settings.h"
@@ -36,6 +33,8 @@ public slots:
     void onSetup(int work, int pause, int bigPause, bool autoWorking,
                  QString filePath, bool onTop, bool save);
     void getSettings(bool apply);
+    void beforeTimeout();
+    void checkFile(QString file);
 
 private slots:
     void onIconActivation(QSystemTrayIcon::ActivationReason r);
@@ -45,6 +44,7 @@ signals:
                      QString filePath, bool onTop, bool save);
     void gotSettings(int work, int pause, int bigPause, bool autoWorking,
                      QString filePath, bool onTop);
+    void fileIsPlayable(bool t);
 
 private:
     Ui::Win *ui;
@@ -54,15 +54,19 @@ private:
     QMenu *trayIconMenu;
     QAction *exitAction;
     QAction *settingsAction;
-    QPoint *lastPos;
-    QSettings *settings;
-    QMediaPlayer *player;
+//    QPoint *lastPos;
+    QMediaPlayer *player = nullptr;
     Settings *settingsWin;
+    QString path;
     bool moving = false;
     bool init = true;
 //    QString lang;
+    struct Point {
+        int x;
+        int y;
+    } lastPos;
 
-    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
+//    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -71,6 +75,7 @@ private:
     void createTrayIcon();
     void setup();
     void setupPlayer(QString filePath);
+
 };
 
 #endif // WIN_H

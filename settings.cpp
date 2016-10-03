@@ -1,6 +1,10 @@
 #include "settings.h"
 #include "ui_settings.h"
 
+#include <QDir>
+#include <QFileDialog>
+#include <QMessageBox>
+
 #include "win.h"
 
 Settings::Settings(QWidget *parent) :
@@ -18,8 +22,12 @@ Settings::Settings(QWidget *parent) :
             win, SIGNAL(newSettings(int,int,int,bool,QString,bool,bool)));
     connect(this, SIGNAL(getSettings(bool)), win, SLOT(getSettings(bool)));
     connect(ui->buttonBox, SIGNAL(accepted()), SLOT(accepted()));
+    connect(this, SIGNAL(checkFile(QString)), win, SLOT(checkFile(QString)));
     connect(ui->buttonBox, &QDialogButtonBox::rejected, [=]() {
         close();
+    });
+    connect(ui->file, &QLineEdit::textChanged, [=]() {
+        fileIsChecked = false;
     });
     connect(ui->work, &QSlider::valueChanged, [=](int time) {
         setDesc(time, ui->workText);
@@ -29,6 +37,32 @@ Settings::Settings(QWidget *parent) :
     });
     connect(ui->bigPause, &QSlider::valueChanged, [=](int time) {
         setDesc(time, ui->bigPauseText);
+    });
+    connect(ui->fileBtn, &QPushButton::clicked, [=]() {
+        QString newPath = QFileDialog::getOpenFileName(this,
+                                                       tr("Select an audio file"),
+                                                       QDir::homePath(),
+                                                       audio_filetypes.join(" "));
+        if(newPath != QString()) {
+            emit checkFile(newPath);
+            ui->file->setText(newPath);
+        }
+    });
+    connect(win, &Win::fileIsPlayable, [=](bool t) {
+        fileIsChecked = true;
+        if(t) {
+            wrongFile = false;
+        } else {
+            wrongFile = true;
+            QMessageBox::StandardButton res =
+                    QMessageBox::warning(this, tr("Error"),
+                                         tr("Selected audio file can't be opened.\nSelect another file?"),
+                                         QMessageBox::Yes | QMessageBox::No,
+                                         QMessageBox::Yes);
+            if(res == QMessageBox::Yes) {
+                ui->fileBtn->click();
+            }
+        }
     });
 
     emit getSettings(false);
@@ -41,6 +75,9 @@ Settings::~Settings()
 
 void Settings::accepted()
 {
+    if(!fileIsChecked) {
+        emit checkFile(ui->file->text());
+    }
     if(work != ui->work->value() || pause != ui->pause->value() ||
             bigPause != ui->bigPause->value() ||
             autoWorking != ui->autoStart->isChecked() ||
@@ -73,9 +110,11 @@ void Settings::gotSettings(int work, int pause, int bigPause, bool autoWorking,
     setDesc(ui->work->value(), ui->workText);
     setDesc(ui->pause->value(), ui->pauseText);
     setDesc(ui->bigPause->value(), ui->bigPauseText);
+
+    emit checkFile(filePath);
 }
 
 void Settings::setDesc(int val, QLabel *label)
 {
-    label->setText(QString::number(val) + " minutes");
+    label->setText(QString::number(val) + tr(" minutes"));
 }

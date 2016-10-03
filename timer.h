@@ -34,6 +34,7 @@ signals:
     void tick(int minutes, int seconds);
     void timeout(int count);
     void started(enum Timer::TIMER_STATE STATE, int minutes);
+    void beforeTimeout();
     void stopped();
     void zeroCount();
     void error();

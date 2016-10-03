@@ -28,6 +28,11 @@ private:
     bool autoWorking;
     QString filePath;
     bool onTop;
+    bool wrongFile = false;
+    bool fileIsChecked = false;
+    const QStringList audio_filetypes = {"*.mp3","*.ogg","*.wav","*.wma",
+                                         "*.m4a","*.aac","*.ac3","*.ape",
+                                         "*.flac","*.ra","*.mka"};
 //    QString lang;
 
     void setDesc(int val, QLabel *label);
@@ -43,6 +48,7 @@ signals:
                          bool autoWorking, QString filePath,
                          bool onTop, bool save);
     void getSettings(bool apply);
+    void checkFile(QString path);
 };
 
 #endif // SETTINGS_H

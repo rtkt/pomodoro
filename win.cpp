@@ -1,7 +1,9 @@
 #include "win.h"
 #include "ui_win.h"
 
-#include <QCoreApplication>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QSettings>
 
 Win::Win(QWidget *parent) :
     QMainWindow(parent),
@@ -11,9 +13,7 @@ Win::Win(QWidget *parent) :
 
     setWindowIcon(QIcon(":/icons/tomato.png"));
 
-    player = new QMediaPlayer(this);
-    player->setVolume(100);
-    settings = new QSettings("rtkt", "Pomodoro");
+//    settings = new QSettings("rtkt", "Pomodoro");
 
     connect(ui->Btn, SIGNAL(clicked()), &timer, SLOT(onClick()));
     connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, bool)),
@@ -35,6 +35,22 @@ Win::~Win()
     delete trayIconMenu;
 }
 
+void Win::beforeTimeout()
+{
+    setupPlayer(path);
+}
+
+void Win::checkFile(QString file)
+{
+    QFileInfo *fi = new QFileInfo(file);
+    if(!fi->isDir() && fi->isReadable()) {
+        emit fileIsPlayable(true);
+    } else {
+        emit fileIsPlayable(false);
+    }
+    delete fi;
+}
+
 void Win::connectTimer()
 {
     connect(&timer, SIGNAL(error()), SLOT(onError()));
@@ -46,6 +62,7 @@ void Win::connectTimer()
     connect(&timer, SIGNAL(zeroCount()), SLOT(onZeroCount()));
     connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, bool)),
             &timer, SLOT(onSetup(int, int, int, bool, QString, bool, bool)));
+    connect(&timer, SIGNAL(beforeTimeout()), SLOT(beforeTimeout()));
 }
 
 void Win::createTrayIcon()
@@ -67,18 +84,19 @@ void Win::createTrayIcon()
         settingsWin->show();
     });
     connect(exitAction, &QAction::triggered, [=]() {
-        QCoreApplication::exit();
+        close();
     });
 }
 
-void Win::closeEvent(QCloseEvent *event)
-{
-    hide();
-    event->ignore();
-}
+//void Win::closeEvent(QCloseEvent *event)
+//{
+//    hide();
+//    event->ignore();
+//}
 
 void Win::getSettings(bool apply)
 {
+    QSettings *settings = new QSettings("rtkt", "Pomodoro");
     int work = settings->value("workingTime", 25).toInt();
     int pause = settings->value("pauseTime", 5).toInt();
     int bigPause = settings->value("bigPauseTime", 15).toInt();
@@ -94,15 +112,16 @@ void Win::getSettings(bool apply)
         emit gotSettings(work, pause, bigPause,
                          autoWorking, path, onTop);
     }
+    delete settings;
 }
 
 void Win::mouseMoveEvent(QMouseEvent *event)
 {
     if((event->buttons() && Qt::LeftButton) && moving) {
-        move(x() + (event->globalX() - lastPos->x()),
-             y() + (event->globalY() - lastPos->y()));
-        lastPos->setX(event->globalX());
-        lastPos->setY(event->globalY());
+        move(x() + (event->globalX() - lastPos.x),
+             y() + (event->globalY() - lastPos.y));
+        lastPos.x = event->globalX();
+        lastPos.y = event->globalY();
     }
 }
 
@@ -110,9 +129,8 @@ void Win::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton) {
         moving = true;
-        lastPos = new QPoint();
-        lastPos->setX(event->globalX());
-        lastPos->setY(event->globalY());
+        lastPos.x = event->globalX();
+        lastPos.y = event->globalY();
     }
 }
 
@@ -120,14 +138,16 @@ void Win::mouseReleaseEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton && moving) {
         moving = false;
-        delete lastPos;
     }
 }
 
 void Win::onError()
 {
     ui->Msg->setText(tr("Something went wrong..."));
+    setupPlayer(path);
     player->play();
+    delete player;
+    player = nullptr;
 }
 
 void Win::onIconActivation(QSystemTrayIcon::ActivationReason r)
@@ -154,6 +174,7 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
                   QString filePath, bool onTop, bool save)
 {
     if(save) {
+        QSettings *settings = new QSettings("rtkt", "Pomodoro", this);
         settings->setValue("workingTime", work);
         settings->setValue("pauseTime", pause);
         settings->setValue("bigPauseTime", bigPause);
@@ -161,6 +182,7 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
         settings->setValue("pathToSoundFile", filePath);
 //        settings->setValue("language");
         settings->setValue("alwaysOnTop", onTop);
+        delete settings;
     }
 
     if(init) {
@@ -171,12 +193,8 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
         }
         init = false;
     }
-    player->setMedia(QUrl::fromLocalFile(filePath));
+    path = filePath;
 
-    (void)work;
-    (void)pause;
-    (void)bigPause;
-    (void)autoWorking;
 
 //    (void)lang;
 }
@@ -216,10 +234,32 @@ void Win::onTick(int minutes, int seconds)
 void Win::onTimeout(int count)
 {
     ui->Count->setText(QString::number(count) + tr(" pomodoros"));
+    if(player == nullptr) {
+        beforeTimeout();
+    }
     player->play();
+    delete player;
+    player = nullptr;
 }
 
 void Win::onZeroCount()
 {
     ui->Count->setText(QString::number(0) + tr(" pomodoros"));
+}
+
+void Win::setupPlayer(QString filePath)
+{
+    if(player == nullptr) {
+        player = new QMediaPlayer(this);
+        player->setVolume(100);
+        connect(player, static_cast<void(QMediaPlayer::*)(QMediaPlayer::Error)>(&QMediaPlayer::error),
+              [=](QMediaPlayer::Error error){
+            if(error != QMediaPlayer::NoError) {
+                QMessageBox::warning(this, tr("Error"),
+                                     tr("Couldn't open audio file.\nPlease select correct audio file in the settings"),
+                                     QMessageBox::Ok, QMessageBox::Ok);
+            }
+        });
+    }
+    player->setMedia(QUrl::fromLocalFile(filePath));
 }
