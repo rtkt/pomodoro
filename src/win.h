@@ -34,18 +34,16 @@ public slots:
     void onSetup(int work, int pause, int bigPause, bool autoWorking,
                  QString filePath, bool onTop, QByteArray geometry, bool save);
     void getSettings(bool apply);
-//    void beforeTimeout();
-    void checkFile(QString file);
 
 private slots:
     void onIconActivation(QSystemTrayIcon::ActivationReason r);
+    void onPlayerError(QMediaPlayer::Error error);
 
 signals:
     void newSettings(int work, int pause, int bigPause, bool autoWorking,
                      QString filePath, bool onTop, QByteArray geometry, bool save);
     void gotSettings(int work, int pause, int bigPause, bool autoWorking,
                      QString filePath, bool onTop);
-    void fileIsPlayable(bool t);
 
 private:
     Ui::Win *ui;
@@ -56,7 +54,6 @@ private:
     QAction *exitAction;
     QAction *settingsAction;
     QMediaPlayer *player = nullptr;
-    Settings *settingsWin;
     QString path;
     bool moving = false;
     bool init = true;
@@ -79,7 +76,6 @@ private:
     void connectTimer();
     void createTrayIcon();
     void setup();
-    void setupPlayer(QString filePath);
 
 };
 

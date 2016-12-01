@@ -18,6 +18,8 @@ Win::Win(QWidget *parent) :
     player = new QMediaPlayer(this);
     player->setVolume(100);
 
+    connect(player, static_cast<void(QMediaPlayer::*)(QMediaPlayer::Error)>(&QMediaPlayer::error),
+          this, &Win::onPlayerError);
     connect(ui->Btn, SIGNAL(clicked()), &timer, SLOT(onClick()));
     connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, bool)),
             SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, bool)));
@@ -36,22 +38,6 @@ Win::~Win()
     delete trayIconMenu;
 }
 
-//void Win::beforeTimeout()
-//{
-//    setupPlayer(path);
-//}
-
-void Win::checkFile(QString file)
-{
-    QFileInfo *fi = new QFileInfo(file);
-    if(!fi->isDir() && fi->isReadable()) {
-        emit fileIsPlayable(true);
-    } else {
-        emit fileIsPlayable(false);
-    }
-    delete fi;
-}
-
 void Win::connectTimer()
 {
     connect(&timer, SIGNAL(error()), SLOT(onError()));
@@ -63,7 +49,6 @@ void Win::connectTimer()
     connect(&timer, SIGNAL(zeroCount()), SLOT(onZeroCount()));
     connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, bool)),
             &timer, SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, bool)));
-//    connect(&timer, SIGNAL(beforeTimeout()), SLOT(beforeTimeout()));
 }
 
 void Win::createTrayIcon()
@@ -75,13 +60,14 @@ void Win::createTrayIcon()
     trayIconMenu->addAction(exitAction);
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setIcon(QIcon::fromTheme("pomodoro", QIcon(QString(ICONS_PATH) + "/pomodoro.png")));
+    trayIcon->setIcon(QIcon::fromTheme("pomodoro",
+                                       QIcon(QString(ICONS_PATH) + "/pomodoro.png")));
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             SLOT(onIconActivation(QSystemTrayIcon::ActivationReason)));
     connect(settingsAction, &QAction::triggered, [=]() {
-        settingsWin = new Settings(this);
+        Settings *settingsWin = new Settings(this);
         settingsWin->show();
     });
     connect(exitAction, &QAction::triggered, [=]() {
@@ -148,10 +134,7 @@ void Win::mouseReleaseEvent(QMouseEvent *event)
 void Win::onError()
 {
     ui->Msg->setText(tr("Something went wrong..."));
-//    setupPlayer(path);
     player->play();
-//    delete player;
-//    player = nullptr;
     minutesLeft.num = 0;
     minutesLeft.str = "00";
 }
@@ -173,6 +156,42 @@ void Win::onIconActivation(QSystemTrayIcon::ActivationReason r)
         break;
      default:
         break;
+    }
+}
+
+void Win::onPlayerError(QMediaPlayer::Error error)
+{
+    int res;
+    QString messageEnding = "\nSelect another file?";
+    switch(error) {
+    case QMediaPlayer::ResourceError:
+        res = QMessageBox::critical(this, tr("Error"), tr("Alarm file couldn't be opened."
+                                                          + messageEnding.toLocal8Bit()),
+                                        QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        break;
+    case QMediaPlayer::FormatError:
+        res = QMessageBox::critical(this, tr("Error"), tr("Something is wrong with the format of the alarm file."
+                                                          + messageEnding.toLocal8Bit()),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        break;
+    case QMediaPlayer::AccessDeniedError:
+        res = QMessageBox::critical(this, tr("Error"), tr("There're no appropriate permissions to play an alarm file."
+                                                          + messageEnding.toLocal8Bit()),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        break;
+    case QMediaPlayer::NoError:
+        return;
+    default:
+        res = QMessageBox::critical(this, tr("Error"), tr("Something is wrong with the alarm file."
+                                                          + messageEnding.toLocal8Bit()),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+        break;
+    }
+
+    if(res == QMessageBox::Yes) {
+        Settings *settings = new Settings(this);
+        settings->show();
+        settings->selectFile();
     }
 }
 
@@ -199,7 +218,6 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
         }
         init = false;
     }
-//    path = filePath;
     player->setMedia(QUrl::fromLocalFile(filePath));
     if(geometry != QByteArray()) {
         restoreGeometry(geometry);
@@ -256,12 +274,7 @@ void Win::onTick(int minutes, int seconds)
 void Win::onTimeout(int count)
 {
     ui->Count->setText(QString::number(count) + tr(" pomodoro(s)"));
-//    if(player == nullptr) {
-//        beforeTimeout();
-//    }
     player->play();
-//    delete player;
-//    player = nullptr;
     minutesLeft.num = 0;
     minutesLeft.str = "00";
 }
@@ -270,20 +283,3 @@ void Win::onZeroCount()
 {
     ui->Count->setText(QString::number(0) + tr(" pomodoro(s)"));
 }
-
-//void Win::setupPlayer(QString filePath)
-//{
-//    if(player == nullptr) {
-//        player = new QMediaPlayer(this);
-//        player->setVolume(100);
-//        connect(player, static_cast<void(QMediaPlayer::*)(QMediaPlayer::Error)>(&QMediaPlayer::error),
-//              [=](QMediaPlayer::Error error){
-//            if(error != QMediaPlayer::NoError) {
-//                QMessageBox::warning(this, tr("Error"),
-//                                     tr("Couldn"t open audio file.\nPlease select correct audio file in the settings"),
-//                                     QMessageBox::Ok, QMessageBox::Ok);
-//            }
-//        });
-//    }
-//    player->setMedia(QUrl::fromLocalFile(filePath));
-//}
