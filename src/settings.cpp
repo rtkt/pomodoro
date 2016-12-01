@@ -13,6 +13,8 @@ Settings::Settings(QWidget *parent) :
     win(static_cast<Win*>(parent))
 {
     ui->setupUi(this);
+
+//    Set this windows modal
     setWindowModality(Qt::ApplicationModal);
 
 //    Delete this window on closing
@@ -48,6 +50,7 @@ Settings::~Settings()
     delete ui;
 }
 
+// Do we need to save settings before closing?
 void Settings::accepted()
 {
     if(work != ui->work->value() || pause != ui->pause->value() ||
@@ -62,6 +65,8 @@ void Settings::accepted()
     close();
 }
 
+
+// We got signal 'gotSettings()' and we need to see what's in...
 void Settings::gotSettings(int work, int pause, int bigPause, bool autoWorking,
                            QString filePath, bool onTop)
 {
@@ -84,6 +89,7 @@ void Settings::gotSettings(int work, int pause, int bigPause, bool autoWorking,
     setDesc(ui->bigPause->value(), ui->bigPauseText);
 }
 
+// Setup and open a file chooser
 void Settings::selectFile()
 {
     QString newPath = QFileDialog::getOpenFileName(this,

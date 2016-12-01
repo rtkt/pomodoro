@@ -83,6 +83,8 @@ void Win::closeEvent(QCloseEvent *event)
     event->ignore();
 }
 
+
+// Just get settings and emit a needed signal
 void Win::getSettings(bool apply)
 {
     QSettings *settings = new QSettings("rtkt", "Pomodoro");
@@ -105,6 +107,7 @@ void Win::getSettings(bool apply)
     delete settings;
 }
 
+// Move the main window (only in window moving state)
 void Win::mouseMoveEvent(QMouseEvent *event)
 {
     if((event->buttons() && Qt::LeftButton) && moving) {
@@ -115,6 +118,7 @@ void Win::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
+// Enter window moving state...
 void Win::mousePressEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton) {
@@ -124,11 +128,26 @@ void Win::mousePressEvent(QMouseEvent *event)
     }
 }
 
+// Quit window moving state
 void Win::mouseReleaseEvent(QMouseEvent *event)
 {
     if(event->button() == Qt::LeftButton && moving) {
         moving = false;
     }
+}
+
+void Win::saveSettings(int work, int pause, int bigPause, bool autoWorking, QString filePath,
+                       bool onTop)
+{
+    QSettings *settings = new QSettings("rtkt", "Pomodoro", this);
+    settings->setValue("workingTime", work);
+    settings->setValue("pauseTime", pause);
+    settings->setValue("bigPauseTime", bigPause);
+    settings->setValue("autoWorking", autoWorking);
+    settings->setValue("pathToSoundFile", filePath);
+//        settings->setValue("language");
+    settings->setValue("alwaysOnTop", onTop);
+    delete settings;
 }
 
 void Win::onError()
@@ -159,6 +178,7 @@ void Win::onIconActivation(QSystemTrayIcon::ActivationReason r)
     }
 }
 
+// Something is wrong with player... (connected to player's Error())
 void Win::onPlayerError(QMediaPlayer::Error error)
 {
     int res;
@@ -199,18 +219,13 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
                   QString filePath, bool onTop, QByteArray geometry, bool save)
 {
     if(save) {
-        QSettings *settings = new QSettings("rtkt", "Pomodoro", this);
-        settings->setValue("workingTime", work);
-        settings->setValue("pauseTime", pause);
-        settings->setValue("bigPauseTime", bigPause);
-        settings->setValue("autoWorking", autoWorking);
-        settings->setValue("pathToSoundFile", filePath);
-//        settings->setValue("language");
-        settings->setValue("alwaysOnTop", onTop);
-        delete settings;
+        saveSettings(work, pause, bigPause, autoWorking, filePath, onTop);
     }
 
     if(init) {
+        if(geometry != QByteArray()) {
+            restoreGeometry(geometry);
+        }
         if(onTop) {
             setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
         } else {
@@ -219,9 +234,6 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
         init = false;
     }
     player->setMedia(QUrl::fromLocalFile(filePath));
-    if(geometry != QByteArray()) {
-        restoreGeometry(geometry);
-    }
 }
 
 void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)

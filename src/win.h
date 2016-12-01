@@ -75,6 +75,8 @@ private:
 
     void connectTimer();
     void createTrayIcon();
+    void saveSettings(int work, int pause, int bigPause, bool autoWorking,
+                      QString filePath, bool onTop, QByteArray geometry);
     void setup();
 
 };

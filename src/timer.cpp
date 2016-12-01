@@ -1,5 +1,6 @@
 #include "timer.h"
 
+// Recieved on main (start/stop) button click
 void Timer::onClick()
 {
     if(st == TIMER_IDLE) {
@@ -9,6 +10,7 @@ void Timer::onClick()
     }
 }
 
+// Apply settings
 void Timer::onSetup(int work, int pause, int bigPause,
                     bool autoWorking, QString filePath,
                     bool onTop, QByteArray geometry, bool save)
@@ -32,6 +34,7 @@ void Timer::onSetup(int work, int pause, int bigPause,
 //    (void)lang;
 }
 
+// Choose the mode and start
 void Timer::start(bool pause)
 {
     if(st != TIMER_IDLE) {
@@ -56,6 +59,8 @@ void Timer::start(bool pause)
     emit started(st, minutes);
 }
 
+// Stop timer, start slack timer (the one that
+// zeroes out pomodoros count after some time) if needed
 void Timer::stop(bool autoStopped)
 {
     killTimer(timerId);
@@ -77,6 +82,7 @@ void Timer::stop(bool autoStopped)
     emit stopped();
 }
 
+// That's a tick function
 void Timer::timerEvent(QTimerEvent *event)
 {
     if(relaxing) {
