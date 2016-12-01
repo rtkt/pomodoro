@@ -21,49 +21,52 @@ UI_DIR = $${DESTDIR}/ui
 TRANSLATIONS_COMPILED = $$TRANSLATIONS
 TRANSLATIONS_COMPILED ~= s/\.ts/.qm/g
 
-isEmpty(PREFIX):PREFIX=/usr/local
+isEmpty(PREFIX):PREFIX=$$INSTROOT/usr/local
 isEmpty(APPDIR):APPDIR=$$PREFIX/share/applications
 isEmpty(ICONDIR):ICONDIR=$$PREFIX/share/pixmaps
 isEmpty(BINDIR):BINDIR=$$PREFIX/bin
 isEmpty(FILESDIR):FILESDIR=$$PREFIX/share/$$TARGET
 isEmpty(SOUNDFILE):SOUNDFILE=$$FILESDIR/bell.ogg
 
-target.path = $$INSTROOT$$BINDIR
-icon.path = $$INSTROOT$$ICONDIR
-desktop.path = $$INSTROOT$$APPDIR
-translations.path = $$INSTROOT$$FILESDIR/translations
-sound.path = $$INSTROOT$$FILESDIR
+target.path = $$BINDIR
+logo.path = $$ICONDIR
+icons.path = $$ICONDIR/$$TARGET
+desktop.path = $$APPDIR
+translations.path = $$FILESDIR/translations
+sound.path = $$FILESDIR
 
-icon.files = ../etc/logo/pomodoro.png
+logo.files = ../etc/icons/pomodoro.png
+icons.files = ../etc/icons/*
 desktop.files = ../etc/pomodoro.desktop
-sound.files = sound/bell.ogg
+sound.files = ../etc/sound/bell.ogg
 
 CONFIG(install_translations) {
     translations.files = $$TRANSLATIONS_COMPILED
-    INSTALL += tranlations
-    LANG_PATH += $$FILESDIR/translations
+    INSTALLS += translations
+    LANG_PATH = $$FILESDIR/translations
     CONFIG *= update_translations release_tranlations
 }
 
 CONFIG(begin_translations) {
-    isEmpty(lupdate):lupdate=lupdate-qt5
+    isEmpty(lupdate):lupdate=lupdate
     system($$lupdate -locations absolute $$_PRO_FILE_)
 }
 
 CONFIG(update_translations) {
-    isEmpty(lupdate):lupdate=lupdate-qt5
+    isEmpty(lupdate):lupdate=lupdate
     system($$lupdate -no-obsolete -locations none $$_PRO_FILE_)
 }
 
 CONFIG(release_translations) {
-    isEmpty(lrelease):lrelease=lrelease-qt5
+    isEmpty(lrelease):lrelease=lrelease
     system($$lrelease $$_PRO_FILE_)
 }
 
-INSTALLS += target sound icon desktop
+INSTALLS += target sound logo desktop icons
 
 DEFINES += "DEFAULT_SOUND=\\\"$$SOUNDFILE\\\"" \
-            "LANG_PATH=\\\"$$LANG_PATH\\\""
+            "LANG_PATH=\\\"$$LANG_PATH\\\"" \
+            "ICONS_PATH=\\\"$$ICONDIR/$$TARGET\\\""
 
 SOURCES += main.cpp\
         win.cpp \
@@ -77,5 +80,4 @@ HEADERS  += win.h \
 FORMS    += win.ui \
     settings.ui
 
-RESOURCES += \
-    img/icons.qrc
+RESOURCES +=

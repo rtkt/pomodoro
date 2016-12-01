@@ -52,10 +52,6 @@
       <property name="text">
        <string/>
       </property>
-      <property name="icon">
-       <iconset resource="media/icons.qrc">
-        <normaloff>:/icons/button_close.png</normaloff>:/icons/button_close.png</iconset>
-      </property>
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
@@ -94,8 +90,6 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="media/icons.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

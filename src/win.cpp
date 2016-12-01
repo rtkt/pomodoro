@@ -12,7 +12,9 @@ Win::Win(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    setWindowIcon(QIcon(":/icons/tomato.png"));
+    setWindowIcon(QIcon::fromTheme("pomodoro", QIcon(QString(ICONS_PATH) + "/pomodoro.png")));
+    ui->closeBtn->setIcon(QIcon::fromTheme("window-close", QIcon(QString(ICONS_PATH) + "/button_close.png")));
+
     player = new QMediaPlayer(this);
     player->setVolume(100);
 
@@ -73,7 +75,7 @@ void Win::createTrayIcon()
     trayIconMenu->addAction(exitAction);
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
-    trayIcon->setIcon(QIcon(":/icons/tomato.png"));
+    trayIcon->setIcon(QIcon::fromTheme("pomodoro", QIcon(QString(ICONS_PATH) + "/pomodoro.png")));
     trayIcon->show();
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
@@ -103,7 +105,7 @@ void Win::getSettings(bool apply)
     int bigPause = settings->value("bigPauseTime", 15).toInt();
     bool autoWorking = settings->value("autoWorking", false).toBool();
     QString path = settings->value("pathToSoundFile",
-                                   "/usr/share/sounds/pomodoro/bell.ogg").toString();
+                                   QString(DEFAULT_SOUND)).toString();
     QByteArray geometry = settings->value("windowGeometry").toByteArray();
 //    QString lang = settings->value("language", "en-US").toString();
     bool onTop = settings->value("alwaysOnTop", true).toBool();

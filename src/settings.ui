@@ -166,10 +166,6 @@
      <property name="text">
       <string/>
      </property>
-     <property name="icon">
-      <iconset resource="media/icons.qrc">
-       <normaloff>:/icons/file_open.png</normaloff>:/icons/file_open.png</iconset>
-     </property>
     </widget>
    </item>
    <item row="8" column="0">
@@ -211,9 +207,7 @@
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="media/icons.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>

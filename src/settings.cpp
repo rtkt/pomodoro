@@ -15,6 +15,7 @@ Settings::Settings(QWidget *parent) :
     ui->setupUi(this);
     setWindowModality(Qt::ApplicationModal);
     setAttribute(Qt::WA_DeleteOnClose);
+    ui->fileBtn->setIcon(QIcon::fromTheme("document-open", QIcon(QString(ICONS_PATH) + "/file_open.png")));
 
     connect(win, SIGNAL(gotSettings(int,int,int,bool,QString,bool)),
             SLOT(gotSettings(int,int,int,bool,QString,bool)));
