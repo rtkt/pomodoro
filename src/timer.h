@@ -8,9 +8,9 @@ class Timer : public QObject
 {
     Q_OBJECT
 
-    int work = 1;
-    int pause = 5;
-    int bigPause = 15;
+    int work;
+    int pause;
+    int bigPause;
     bool autoWorking = false;
     int count = 0;
     int minutes;
@@ -34,7 +34,7 @@ signals:
     void tick(int minutes, int seconds);
     void timeout(int count);
     void started(enum Timer::TIMER_STATE STATE, int minutes);
-    void beforeTimeout();
+//    void beforeTimeout();
     void stopped();
     void zeroCount();
     void error();

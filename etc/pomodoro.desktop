@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Pomodoro timer
+GenericName=Simple pomodoro timer
+Comment=Simple pomodoro timer
+Icon=pomodoro
+Exec=pomodoro
+Terminal=false
+Categories=Utility

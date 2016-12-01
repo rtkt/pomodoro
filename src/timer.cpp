@@ -76,18 +76,20 @@ void Timer::timerEvent(QTimerEvent *event)
     if(minutes == 0 && seconds == 1) {
         enum TIMER_STATE prevState = st;
         seconds--;
+        if(prevState == TIMER_WORKING) {
+            count++;
+        }
         emit timeout(count);
         stop();
         if(prevState == TIMER_WORKING) {
             start(true);
-            count++;
         } else if(autoWorking == true) {
             start();
         }
         return;
-    } else if(minutes == 0 && seconds == 5) {
-        emit beforeTimeout();
-        seconds--;
+//    } else if(minutes == 0 && seconds == 5) {
+//        emit beforeTimeout();
+//        seconds--;
     } else if(seconds == 0) {
         seconds = 59;
         minutes--;

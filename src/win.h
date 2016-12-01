@@ -34,7 +34,7 @@ public slots:
     void onSetup(int work, int pause, int bigPause, bool autoWorking,
                  QString filePath, bool onTop, QByteArray geometry, bool save);
     void getSettings(bool apply);
-    void beforeTimeout();
+//    void beforeTimeout();
     void checkFile(QString file);
 
 private slots:
@@ -61,6 +61,11 @@ private:
     bool moving = false;
     bool init = true;
 //    QString lang;
+    struct MinutesLeft {
+        int num;
+        QString str;
+    } minutesLeft;
+
     struct Point {
         int x;
         int y;

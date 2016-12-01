@@ -13,6 +13,8 @@ Win::Win(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowIcon(QIcon(":/icons/tomato.png"));
+    player = new QMediaPlayer(this);
+    player->setVolume(100);
 
     connect(ui->Btn, SIGNAL(clicked()), &timer, SLOT(onClick()));
     connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, bool)),
@@ -32,10 +34,10 @@ Win::~Win()
     delete trayIconMenu;
 }
 
-void Win::beforeTimeout()
-{
-    setupPlayer(path);
-}
+//void Win::beforeTimeout()
+//{
+//    setupPlayer(path);
+//}
 
 void Win::checkFile(QString file)
 {
@@ -59,7 +61,7 @@ void Win::connectTimer()
     connect(&timer, SIGNAL(zeroCount()), SLOT(onZeroCount()));
     connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, bool)),
             &timer, SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, bool)));
-    connect(&timer, SIGNAL(beforeTimeout()), SLOT(beforeTimeout()));
+//    connect(&timer, SIGNAL(beforeTimeout()), SLOT(beforeTimeout()));
 }
 
 void Win::createTrayIcon()
@@ -144,10 +146,12 @@ void Win::mouseReleaseEvent(QMouseEvent *event)
 void Win::onError()
 {
     ui->Msg->setText(tr("Something went wrong..."));
-    setupPlayer(path);
+//    setupPlayer(path);
     player->play();
-    delete player;
-    player = nullptr;
+//    delete player;
+//    player = nullptr;
+    minutesLeft.num = 0;
+    minutesLeft.str = "00";
 }
 
 void Win::onIconActivation(QSystemTrayIcon::ActivationReason r)
@@ -193,7 +197,8 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
         }
         init = false;
     }
-    path = filePath;
+//    path = filePath;
+    player->setMedia(QUrl::fromLocalFile(filePath));
     if(geometry != QByteArray()) {
         restoreGeometry(geometry);
     }
@@ -202,7 +207,10 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
 void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)
 {
     ui->Btn->setText(tr("Stop"));
-    ui->Time->setText(QString::number(minutes) + ":00");
+    this->minutesLeft.num = minutes;
+    minutes < 10 ? this->minutesLeft.str = "0" + QString::number(minutes) :
+            this->minutesLeft.str = QString::number(minutes);
+    ui->Time->setText(this->minutesLeft.str + ":00");
     switch(STATE) {
     case Timer::TIMER_WORKING:
         ui->Msg->setText(tr("Now work"));
@@ -223,43 +231,57 @@ void Win::onStop()
     ui->Btn->setText(tr("Start"));
     ui->Msg->setText(tr("Stopped"));
     ui->Time->setText("00:00");
+    minutesLeft.num = 0;
+    minutesLeft.str = "00";
 }
 
 void Win::onTick(int minutes, int seconds)
 {
-    ui->Time->setText(QString::number(minutes) + ":" +
-                      QString::number(seconds));
+    QString sec;
+    if(this->minutesLeft.num != minutes) {
+        this->minutesLeft.num = minutes;
+        minutes < 10 ? this->minutesLeft.str = "0" + QString::number(minutes) :
+                this->minutesLeft.str = QString::number(minutes);
+    }
+    if(seconds < 10) {
+        sec = "0" + QString::number(seconds);
+    } else {
+        sec = QString::number(seconds);
+    }
+    ui->Time->setText(minutesLeft.str + ":" + sec);
 }
 
 void Win::onTimeout(int count)
 {
-    ui->Count->setText(QString::number(count) + tr(" pomodoros"));
-    if(player == nullptr) {
-        beforeTimeout();
-    }
+    ui->Count->setText(QString::number(count) + tr(" pomodoro(s)"));
+//    if(player == nullptr) {
+//        beforeTimeout();
+//    }
     player->play();
-    delete player;
-    player = nullptr;
+//    delete player;
+//    player = nullptr;
+    minutesLeft.num = 0;
+    minutesLeft.str = "00";
 }
 
 void Win::onZeroCount()
 {
-    ui->Count->setText(QString::number(0) + tr(" pomodoros"));
+    ui->Count->setText(QString::number(0) + tr(" pomodoro(s)"));
 }
 
-void Win::setupPlayer(QString filePath)
-{
-    if(player == nullptr) {
-        player = new QMediaPlayer(this);
-        player->setVolume(100);
-        connect(player, static_cast<void(QMediaPlayer::*)(QMediaPlayer::Error)>(&QMediaPlayer::error),
-              [=](QMediaPlayer::Error error){
-            if(error != QMediaPlayer::NoError) {
-                QMessageBox::warning(this, tr("Error"),
-                                     tr("Couldn't open audio file.\nPlease select correct audio file in the settings"),
-                                     QMessageBox::Ok, QMessageBox::Ok);
-            }
-        });
-    }
-    player->setMedia(QUrl::fromLocalFile(filePath));
-}
+//void Win::setupPlayer(QString filePath)
+//{
+//    if(player == nullptr) {
+//        player = new QMediaPlayer(this);
+//        player->setVolume(100);
+//        connect(player, static_cast<void(QMediaPlayer::*)(QMediaPlayer::Error)>(&QMediaPlayer::error),
+//              [=](QMediaPlayer::Error error){
+//            if(error != QMediaPlayer::NoError) {
+//                QMessageBox::warning(this, tr("Error"),
+//                                     tr("Couldn"t open audio file.\nPlease select correct audio file in the settings"),
+//                                     QMessageBox::Ok, QMessageBox::Ok);
+//            }
+//        });
+//    }
+//    player->setMedia(QUrl::fromLocalFile(filePath));
+//}
