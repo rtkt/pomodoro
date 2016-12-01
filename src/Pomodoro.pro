@@ -21,7 +21,7 @@ UI_DIR = $${DESTDIR}/ui
 TRANSLATIONS_COMPILED = $$TRANSLATIONS
 TRANSLATIONS_COMPILED ~= s/\.ts/.qm/g
 
-isEmpty(PREFIX):PREFIX=$$INSTROOT/usr/local
+isEmpty(PREFIX):PREFIX=/usr/local
 isEmpty(APPDIR):APPDIR=$$PREFIX/share/applications
 isEmpty(ICONDIR):ICONDIR=$$PREFIX/share/pixmaps
 isEmpty(BINDIR):BINDIR=$$PREFIX/bin
