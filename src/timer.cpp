@@ -62,6 +62,13 @@ void Timer::stop(bool autoStopped)
     timerId = 0;
     minutes = 0;
     seconds = 0;
+    if(st == TIMER_PAUSE && autoStopped) {
+        timerId = startTimer(pause * 30 * 1000);
+        relaxing = true;
+    } else if(st == TIMER_BIGPAUSE && autoStopped) {
+        timerId = startTimer(bigPause * 30 * 1000);
+        relaxing = true;
+    }
     st = TIMER_IDLE;
     if(!autoStopped) {
         count = 0;
@@ -72,6 +79,12 @@ void Timer::stop(bool autoStopped)
 
 void Timer::timerEvent(QTimerEvent *event)
 {
+    if(relaxing) {
+        stop(false);
+        killTimer(timerId);
+        return;
+    }
+
     event->accept();
     if(minutes == 0 && seconds == 1) {
         enum TIMER_STATE prevState = st;
@@ -93,5 +106,12 @@ void Timer::timerEvent(QTimerEvent *event)
     } else {
         seconds--;
     }
+
+    if(minutes < 0 || seconds < 0 || seconds >= 60) {
+        stop(false);
+        emit error();
+        return;
+    }
+
     emit tick(minutes, seconds);
 }

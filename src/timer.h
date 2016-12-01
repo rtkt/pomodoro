@@ -12,6 +12,7 @@ class Timer : public QObject
     int pause;
     int bigPause;
     bool autoWorking = false;
+    bool relaxing = false;
     int count = 0;
     int minutes;
     int seconds;
