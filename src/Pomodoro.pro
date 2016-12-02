@@ -40,6 +40,21 @@ icons.files = ../etc/icons/*
 desktop.files = ../etc/pomodoro.desktop
 sound.files = ../etc/sound/bell.ogg
 
+CONFIG(embed_translations) {
+    # create translations resource file
+    system("echo \'<RCC><qresource prefix=\"/\">\' > translations.qrc")
+    for(translation, TRANSLATIONS_COMPILED):system("echo \'<file>$$translation</file>\' >> translations.qrc")
+    system("echo \'</qresource></RCC>\'" >> translations.qrc)
+
+    # add file to build
+    RESOURCES += translations.qrc
+
+    LANG_PATH += :/translations
+
+    # make sure translations are updated and released
+    CONFIG *= update_translations release_translations
+}
+
 CONFIG(install_translations) {
     translations.files = $$TRANSLATIONS_COMPILED
     INSTALLS += translations
@@ -80,4 +95,5 @@ HEADERS  += win.h \
 FORMS    += win.ui \
     settings.ui
 
-RESOURCES +=
+RESOURCES += \
+    translations.qrc
