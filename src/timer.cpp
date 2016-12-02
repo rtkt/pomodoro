@@ -42,6 +42,9 @@ void Timer::start(bool pause)
         return;
     }
 
+    killtimer(timerId);
+    relaxing = false;
+
     if(pause == false) {
         st = TIMER_WORKING;
         minutes = work;
