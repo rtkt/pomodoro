@@ -8,6 +8,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QSystemTrayIcon>
+#include <QTranslator>
 
 #include "settings.h"
 #include "timer.h"
@@ -24,6 +25,8 @@ public:
     explicit Win(QWidget *parent = 0);
     ~Win();
 
+    QTranslator translator;
+
 public slots:
     void onTick(int minutes, int seconds);
     void onTimeout(int count);
@@ -32,7 +35,7 @@ public slots:
     void onZeroCount();
     void onError();
     void onSetup(int work, int pause, int bigPause, bool autoWorking,
-                 QString filePath, bool onTop, QByteArray geometry, bool save);
+                 QString filePath, bool onTop, QByteArray geometry, QString lang, bool save);
     void getSettings(bool apply);
 
 private slots:
@@ -41,9 +44,9 @@ private slots:
 
 signals:
     void newSettings(int work, int pause, int bigPause, bool autoWorking,
-                     QString filePath, bool onTop, QByteArray geometry, bool save);
+                     QString filePath, bool onTop, QByteArray geometry, QString lang, bool save);
     void gotSettings(int work, int pause, int bigPause, bool autoWorking,
-                     QString filePath, bool onTop);
+                     QString filePath, bool onTop, QString lang);
 
 private:
     Ui::Win *ui;
@@ -57,6 +60,7 @@ private:
     QString path;
     bool moving = false;
     bool init = true;
+    QString currentLang = "en";
 //    QString lang;
     struct MinutesLeft {
         int num;
@@ -76,7 +80,7 @@ private:
     void connectTimer();
     void createTrayIcon();
     void saveSettings(int work, int pause, int bigPause, bool autoWorking,
-                      QString filePath, bool onTop, QByteArray geometry);
+                      QString filePath, bool onTop, QString lang);
     void setup();
 
 };

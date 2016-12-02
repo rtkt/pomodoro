@@ -28,25 +28,25 @@ private:
     bool autoWorking;
     QString filePath;
     bool onTop;
+    QString lang;
     const QStringList audio_filetypes = {"*.mp3","*.ogg","*.wav","*.wma",
                                          "*.m4a","*.aac","*.ac3","*.ape",
                                          "*.flac","*.ra","*.mka"};
-//    QString lang;
-
+    void populateLangs();
     void setDesc(int val, QLabel *label);
 
 public slots:
     void selectFile();
     void gotSettings(int work, int pause, int bigPause,
                      bool autoWorking, QString filePath,
-                     bool onTop);
+                     bool onTop, QString lang);
     void accepted();
 
 signals:
     void changedSettings(int work, int pause, int bigPause,
                          bool autoWorking, QString filePath,
                          bool onTop, QByteArray geom,
-                         bool save);
+                         QString lang, bool save);
     void getSettings(bool apply);
     void checkFile(QString path);
 };

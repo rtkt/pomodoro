@@ -8,18 +8,8 @@
         <translation>Выберите аудиофайл</translation>
     </message>
     <message>
-        <source>Error</source>
-        <translation>Ошибка</translation>
-    </message>
-    <message>
-        <source>Selected audio file can&apos;t be opened.
-Select another file?</source>
-        <translation>Выбранный аудиофайл не может быть открыт.
-Выбрать другой файл?</translation>
-    </message>
-    <message>
-        <source> minutes</source>
-        <translation>минут</translation>
+        <source> minute(s)</source>
+        <translation> минут(ы)</translation>
     </message>
 </context>
 <context>
@@ -61,20 +51,48 @@ Select another file?</source>
         <translation>Остановить</translation>
     </message>
     <message>
-        <source>Now work</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Rest a bit (small break)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Now rest (big pause)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source> pomodoro(s)</source>
-        <translation>помодоро</translation>
+        <translation> помодоро</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <source>Alarm file couldn&apos;t be opened.
+Select another file?</source>
+        <translation>Файл со звуковым сигналом не может быть открыт.
+Выбрать другой файл?</translation>
+    </message>
+    <message>
+        <source>Something is wrong with the format of the alarm file.
+Select another file?</source>
+        <translation>Что-то не так с форматом файла звукового сигнала.
+Выбрать другой файл?</translation>
+    </message>
+    <message>
+        <source>There&apos;re no appropriate permissions to play an alarm file.
+Select another file?</source>
+        <translation>Недостаточно прав для воспроизведения файла звукового сигнала.
+Выбрать другой файл?</translation>
+    </message>
+    <message>
+        <source>Something is wrong with the alarm file.
+Select another file?</source>
+        <translation>Что-то не так с файлом звукового сигнала.
+Выбрать другой файл?</translation>
+    </message>
+    <message>
+        <source>Time to work</source>
+        <translation>Время работать</translation>
+    </message>
+    <message>
+        <source>Break</source>
+        <translation>Перерыв</translation>
+    </message>
+    <message>
+        <source>Big break</source>
+        <translation>Большой перерыв</translation>
     </message>
 </context>
 <context>

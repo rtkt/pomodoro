@@ -22,10 +22,10 @@ Settings::Settings(QWidget *parent) :
 
     ui->fileBtn->setIcon(QIcon::fromTheme("document-open", QIcon(QString(ICONS_PATH) + "/file_open.png")));
 
-    connect(win, SIGNAL(gotSettings(int,int,int,bool,QString,bool)),
-            SLOT(gotSettings(int,int,int,bool,QString,bool)));
-    connect(this, SIGNAL(changedSettings(int,int,int,bool,QString,bool,QByteArray,bool)),
-            win, SIGNAL(newSettings(int,int,int,bool,QString,bool,QByteArray,bool)));
+    connect(win, SIGNAL(gotSettings(int,int,int,bool,QString,bool,QString)),
+            SLOT(gotSettings(int,int,int,bool,QString,bool,QString)));
+    connect(this, SIGNAL(changedSettings(int,int,int,bool,QString,bool,QByteArray,QString,bool)),
+            win, SIGNAL(newSettings(int,int,int,bool,QString,bool,QByteArray,QString,bool)));
     connect(this, SIGNAL(getSettings(bool)), win, SLOT(getSettings(bool)));
     connect(ui->buttonBox, SIGNAL(accepted()), SLOT(accepted()));
     connect(ui->buttonBox, &QDialogButtonBox::rejected, [=]() {
@@ -42,6 +42,7 @@ Settings::Settings(QWidget *parent) :
     });
     connect(ui->fileBtn, &QPushButton::clicked, this, &Settings::selectFile);
 
+    populateLangs();
     emit getSettings(false);
 }
 
@@ -57,10 +58,12 @@ void Settings::accepted()
             bigPause != ui->bigPause->value() ||
             autoWorking != ui->autoStart->isChecked() ||
             filePath != ui->file->text() ||
-            onTop != ui->onTop->isChecked()) {
+            onTop != ui->onTop->isChecked() ||
+            lang != ui->language->currentText()) {
         emit changedSettings(ui->work->value(), ui->pause->value(),
                              ui->bigPause->value(), ui->autoStart->isChecked(),
-                             ui->file->text(), ui->onTop->isChecked(), QByteArray(), true);
+                             ui->file->text(), ui->onTop->isChecked(), QByteArray(),
+                             ui->language->currentText(), true);
     }
     close();
 }
@@ -68,7 +71,7 @@ void Settings::accepted()
 
 // We got signal 'gotSettings()' and we need to see what's in...
 void Settings::gotSettings(int work, int pause, int bigPause, bool autoWorking,
-                           QString filePath, bool onTop)
+                           QString filePath, bool onTop, QString lang)
 {
     this->work = work;
     this->pause = pause;
@@ -76,6 +79,7 @@ void Settings::gotSettings(int work, int pause, int bigPause, bool autoWorking,
     this->autoWorking = autoWorking;
     this->filePath = filePath;
     this->onTop = onTop;
+    this->lang = lang;
 
     ui->work->setValue(work);
     ui->pause->setValue(pause);
@@ -83,10 +87,28 @@ void Settings::gotSettings(int work, int pause, int bigPause, bool autoWorking,
     ui->autoStart->setChecked(autoWorking);
     ui->file->setText(filePath);
     ui->onTop->setChecked(onTop);
+    ui->language->setCurrentText(lang);
 
     setDesc(ui->work->value(), ui->workText);
     setDesc(ui->pause->value(), ui->pauseText);
     setDesc(ui->bigPause->value(), ui->bigPauseText);
+}
+
+void Settings::populateLangs()
+{
+    // open the language directory
+    QDir root(LANG_PATH);
+    // get files in the directory with .qm extension
+    QFileInfoList flist;
+    flist = root.entryInfoList({"*.qm"}, QDir::Files);
+    // add the languages to the combo box
+    ui->language->addItem("en");
+    for(auto &i : flist)
+    {
+        QString lang = i.fileName();
+        lang.chop(3); // -  .qm
+        ui->language->addItem(lang);
+    }
 }
 
 // Setup and open a file chooser

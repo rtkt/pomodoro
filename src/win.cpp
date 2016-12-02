@@ -21,8 +21,8 @@ Win::Win(QWidget *parent) :
     connect(player, static_cast<void(QMediaPlayer::*)(QMediaPlayer::Error)>(&QMediaPlayer::error),
           this, &Win::onPlayerError);
     connect(ui->Btn, SIGNAL(clicked()), &timer, SLOT(onClick()));
-    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, bool)),
-            SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, bool)));
+    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, QString, bool)),
+            SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, QString, bool)));
     connect(ui->closeBtn, &QPushButton::clicked, [=]() {
         close();
     });
@@ -47,8 +47,8 @@ void Win::connectTimer()
     connect(&timer, SIGNAL(tick(int, int)), SLOT(onTick(int, int)));
     connect(&timer, SIGNAL(timeout(int)), SLOT(onTimeout(int)));
     connect(&timer, SIGNAL(zeroCount()), SLOT(onZeroCount()));
-    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, bool)),
-            &timer, SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, bool)));
+    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, QString, bool)),
+            &timer, SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, QString, bool)));
 }
 
 void Win::createTrayIcon()
@@ -85,6 +85,7 @@ void Win::closeEvent(QCloseEvent *event)
 
 
 // Just get settings and emit a needed signal
+// If changing default settings/settings' names here, change them in saveSettings() too
 void Win::getSettings(bool apply)
 {
     QSettings *settings = new QSettings("rtkt", "Pomodoro");
@@ -95,14 +96,14 @@ void Win::getSettings(bool apply)
     QString path = settings->value("pathToSoundFile",
                                    QString(DEFAULT_SOUND)).toString();
     QByteArray geometry = settings->value("windowGeometry").toByteArray();
-//    QString lang = settings->value("language", "en-US").toString();
+    QString lang = settings->value("language", "en").toString();
     bool onTop = settings->value("alwaysOnTop", true).toBool();
     if(apply) {
         emit newSettings(work, pause, bigPause,
-                         autoWorking, path, onTop, geometry, false);
+                         autoWorking, path, onTop, geometry, lang, false);
     } else {
         emit gotSettings(work, pause, bigPause,
-                         autoWorking, path, onTop);
+                         autoWorking, path, onTop, lang);
     }
     delete settings;
 }
@@ -136,17 +137,32 @@ void Win::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
+// If changing default settings/settings' names here, change them in getSettings() too
 void Win::saveSettings(int work, int pause, int bigPause, bool autoWorking, QString filePath,
-                       bool onTop)
+                       bool onTop, QString lang)
 {
     QSettings *settings = new QSettings("rtkt", "Pomodoro", this);
-    settings->setValue("workingTime", work);
-    settings->setValue("pauseTime", pause);
-    settings->setValue("bigPauseTime", bigPause);
-    settings->setValue("autoWorking", autoWorking);
-    settings->setValue("pathToSoundFile", filePath);
-//        settings->setValue("language");
-    settings->setValue("alwaysOnTop", onTop);
+    if(settings->value("workingTime", 25).toInt() != work) {
+        settings->setValue("workingTime", work);
+    }
+    if(settings->value("pauseTime", 5).toInt() != pause) {
+        settings->setValue("pauseTime", pause);
+    }
+    if(settings->value("bigPauseTime", 15).toInt() != bigPause) {
+        settings->setValue("bigPauseTime", bigPause);
+    }
+    if(settings->value("autoWorking", false).toBool() != autoWorking) {
+        settings->setValue("autoWorking", autoWorking);
+    }
+    if(settings->value("pathToSoundFile", QString(DEFAULT_SOUND)).toString() != filePath) {
+        settings->setValue("pathToSoundFile", filePath);
+    }
+    if(settings->value("language", "en").toString() != lang) {
+        settings->setValue("language", lang);
+    }
+    if(settings->value("alwaysOnTop", true).toBool() != onTop) {
+        settings->setValue("alwaysOnTop", onTop);
+    }
     delete settings;
 }
 
@@ -182,28 +198,27 @@ void Win::onIconActivation(QSystemTrayIcon::ActivationReason r)
 void Win::onPlayerError(QMediaPlayer::Error error)
 {
     int res;
-    QString messageEnding = "\nSelect another file?";
     switch(error) {
     case QMediaPlayer::ResourceError:
-        res = QMessageBox::critical(this, tr("Error"), tr("Alarm file couldn't be opened."
-                                                          + messageEnding.toLocal8Bit()),
+        res = QMessageBox::critical(this, tr("Error"),
+                                    tr("Alarm file couldn't be opened.\nSelect another file?"),
                                         QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         break;
     case QMediaPlayer::FormatError:
-        res = QMessageBox::critical(this, tr("Error"), tr("Something is wrong with the format of the alarm file."
-                                                          + messageEnding.toLocal8Bit()),
+        res = QMessageBox::critical(this, tr("Error"),
+                                    tr("Something is wrong with the format of the alarm file.\nSelect another file?"),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         break;
     case QMediaPlayer::AccessDeniedError:
-        res = QMessageBox::critical(this, tr("Error"), tr("There're no appropriate permissions to play an alarm file."
-                                                          + messageEnding.toLocal8Bit()),
+        res = QMessageBox::critical(this, tr("Error"),
+                                    tr("There're no appropriate permissions to play an alarm file.\nSelect another file?"),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         break;
     case QMediaPlayer::NoError:
         return;
     default:
-        res = QMessageBox::critical(this, tr("Error"), tr("Something is wrong with the alarm file."
-                                                          + messageEnding.toLocal8Bit()),
+        res = QMessageBox::critical(this, tr("Error"),
+                                    tr("Something is wrong with the alarm file.\nSelect another file?"),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
         break;
     }
@@ -216,10 +231,10 @@ void Win::onPlayerError(QMediaPlayer::Error error)
 }
 
 void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
-                  QString filePath, bool onTop, QByteArray geometry, bool save)
+                  QString filePath, bool onTop, QByteArray geometry, QString lang, bool save)
 {
     if(save) {
-        saveSettings(work, pause, bigPause, autoWorking, filePath, onTop);
+        saveSettings(work, pause, bigPause, autoWorking, filePath, onTop, lang);
     }
 
     if(init) {
@@ -234,6 +249,19 @@ void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
         init = false;
     }
     player->setMedia(QUrl::fromLocalFile(filePath));
+
+
+    if(lang != currentLang) {
+        if(currentLang != "en") {
+            qApp->removeTranslator(&translator);
+        }
+        if(lang != "en") {
+            translator.load(lang, LANG_PATH);
+            qApp->installTranslator(&translator);
+        }
+        ui->retranslateUi(this);
+        currentLang = lang;
+    }
 }
 
 void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)
@@ -245,13 +273,13 @@ void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)
     ui->Time->setText(this->minutesLeft.str + ":00");
     switch(STATE) {
     case Timer::TIMER_WORKING:
-        ui->Msg->setText(tr("Now work"));
+        ui->Msg->setText(tr("Time to work"));
         break;
     case Timer::TIMER_PAUSE:
-        ui->Msg->setText(tr("Rest a bit (small break)"));
+        ui->Msg->setText(tr("Break"));
         break;
     case Timer::TIMER_BIGPAUSE:
-        ui->Msg->setText(tr("Now rest (big pause)"));
+        ui->Msg->setText(tr("Big break"));
         break;
     default:
         ui->Msg->setText(tr("Something went wrong..."));

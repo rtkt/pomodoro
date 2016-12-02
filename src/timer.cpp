@@ -13,7 +13,7 @@ void Timer::onClick()
 // Apply settings
 void Timer::onSetup(int work, int pause, int bigPause,
                     bool autoWorking, QString filePath,
-                    bool onTop, QByteArray geometry, bool save)
+                    bool onTop, QByteArray geometry, QString lang, bool save)
 {
     if(this->work != work || this->pause != pause || this->bigPause != bigPause) {
         if(st != TIMER_IDLE) {
@@ -31,7 +31,7 @@ void Timer::onSetup(int work, int pause, int bigPause,
     (void)onTop;
     (void)save;
     (void)geometry;
-//    (void)lang;
+    (void)lang;
 }
 
 // Choose the mode and start
@@ -42,7 +42,7 @@ void Timer::start(bool pause)
         return;
     }
 
-    killtimer(timerId);
+    killTimer(timerId);
     relaxing = false;
 
     if(pause == false) {
