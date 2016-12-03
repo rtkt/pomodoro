@@ -2,8 +2,11 @@
 Type=Application
 Version=1.0
 Name=Pomodoro timer
+Name[ru]=Pomodoro таймер
 GenericName=Simple pomodoro timer
+GenericName[ru]=Простой pomodoro таймер
 Comment=Simple pomodoro timer
+Comment[ru]=Простой pomodoro таймер
 Icon=pomodoro
 Exec=pomodoro
 Terminal=false
