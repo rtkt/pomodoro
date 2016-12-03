@@ -7,6 +7,7 @@
 #include <QMediaPlayer>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QSettings>
 #include <QSystemTrayIcon>
 #include <QTranslator>
 
@@ -25,7 +26,21 @@ public:
     explicit Win(QWidget *parent = 0);
     ~Win();
 
+    struct options {
+        bool autoWorking;
+        bool autoZero;
+        int bigPause;
+        QString language;
+        bool onTop;
+        QString path;
+        int pause;
+        int work;
+    };
+
+    inline QSettings* newSettings() {return new QSettings("rtkt", "pomodoro");}
     QTranslator translator;
+
+    struct Win::options* getSettings();
 
 public slots:
     void onTick(int minutes, int seconds);
@@ -34,19 +49,29 @@ public slots:
     void onStop();
     void onZeroCount();
     void onError();
-    void onSetup(int work, int pause, int bigPause, bool autoWorking,
-                 QString filePath, bool onTop, QByteArray geometry, QString lang, bool save);
-    void getSettings(bool apply);
 
 private slots:
     void onIconActivation(QSystemTrayIcon::ActivationReason r);
     void onPlayerError(QMediaPlayer::Error error);
+    void onSetLang(QString lang);
+    inline void onSetOnTop(bool val) {
+        if(val) {
+            setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+        } else {
+            setWindowFlags(Qt::FramelessWindowHint);
+        }
+    }
+    inline void onSetPath(QString path) {player->setMedia(QUrl::fromLocalFile(path));}
 
 signals:
-    void newSettings(int work, int pause, int bigPause, bool autoWorking,
-                     QString filePath, bool onTop, QByteArray geometry, QString lang, bool save);
-    void gotSettings(int work, int pause, int bigPause, bool autoWorking,
-                     QString filePath, bool onTop, QString lang);
+    void setAutoWorking(bool val);
+    void setAutoZero(bool val);
+    void setBigPauseTime(int time);
+    void setLang(QString lang);
+    void setOnTop(bool val);
+    void setPath(QString path);
+    void setPauseTime(int time);
+    void setWorkTime(int time);
 
 private:
     Ui::Win *ui;
@@ -79,8 +104,6 @@ private:
 
     void connectTimer();
     void createTrayIcon();
-    void saveSettings(int work, int pause, int bigPause, bool autoWorking,
-                      QString filePath, bool onTop, QString lang);
     void setup();
 
 };

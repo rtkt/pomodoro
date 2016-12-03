@@ -11,25 +11,34 @@ Win::Win(QWidget *parent) :
     ui(new Ui::Win)
 {
     ui->setupUi(this);
+    player = new QMediaPlayer(this);
+    player->setVolume(100);
 
     setWindowIcon(QIcon::fromTheme("pomodoro", QIcon(QString(ICONS_PATH) + "/pomodoro.png")));
     ui->closeBtn->setIcon(QIcon::fromTheme("window-close", QIcon(QString(ICONS_PATH) + "/button_close.png")));
 
-    player = new QMediaPlayer(this);
-    player->setVolume(100);
-
-    connect(player, static_cast<void(QMediaPlayer::*)(QMediaPlayer::Error)>(&QMediaPlayer::error),
-          this, &Win::onPlayerError);
+//    connect(player, static_cast<void(QMediaPlayer::*)(QMediaPlayer::Error)>(&QMediaPlayer::error),
+//          this, &Win::onPlayerError);
+    connect(player, SIGNAL(error(QMediaPlayer::Error)), SLOT(onPlayerError(QMediaPlayer::Error)));
     connect(ui->Btn, SIGNAL(clicked()), &timer, SLOT(onClick()));
-    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, QString, bool)),
-            SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, QString, bool)));
     connect(ui->closeBtn, &QPushButton::clicked, [=]() {
         close();
     });
+    connect(this, SIGNAL(setLang(QString)), SLOT(onSetLang(QString)));
+    connect(this, SIGNAL(setOnTop(bool)), SLOT(onSetOnTop(bool)));
+    connect(this, SIGNAL(setPath(QString)), SLOT(onSetPath(QString)));
+    connectTimer();
 
     createTrayIcon();
-    connectTimer();
-    getSettings(true);
+
+
+    QSettings *settings = newSettings();
+    if(settings->value("windowGeometry", QByteArray()).toByteArray() != QByteArray()) {
+        restoreGeometry(settings->value("windowGeometry").toByteArray());
+    }
+    delete settings;
+
+    setup();
 }
 
 Win::~Win()
@@ -47,8 +56,11 @@ void Win::connectTimer()
     connect(&timer, SIGNAL(tick(int, int)), SLOT(onTick(int, int)));
     connect(&timer, SIGNAL(timeout(int)), SLOT(onTimeout(int)));
     connect(&timer, SIGNAL(zeroCount()), SLOT(onZeroCount()));
-    connect(this, SIGNAL(newSettings(int, int, int, bool, QString, bool, QByteArray, QString, bool)),
-            &timer, SLOT(onSetup(int, int, int, bool, QString, bool, QByteArray, QString, bool)));
+    connect(this, SIGNAL(setWorkTime(int)), &timer, SLOT(setWorkTime(int)));
+    connect(this, SIGNAL(setPauseTime(int)), &timer, SLOT(setPauseTime(int)));
+    connect(this, SIGNAL(setBigPauseTime(int)), &timer, SLOT(setBigPauseTime(int)));
+    connect(this, SIGNAL(setAutoWorking(bool)), &timer, SLOT(setAutoWorking(bool)));
+    connect(this, SIGNAL(setAutoZero(bool)), &timer, SLOT(setAutoZero(bool)));
 }
 
 void Win::createTrayIcon()
@@ -85,27 +97,20 @@ void Win::closeEvent(QCloseEvent *event)
 
 
 // Just get settings and emit a needed signal
-// If changing default settings/settings' names here, change them in saveSettings() too
-void Win::getSettings(bool apply)
+struct Win::options* Win::getSettings()
 {
-    QSettings *settings = new QSettings("rtkt", "Pomodoro");
-    int work = settings->value("workingTime", 25).toInt();
-    int pause = settings->value("pauseTime", 5).toInt();
-    int bigPause = settings->value("bigPauseTime", 15).toInt();
-    bool autoWorking = settings->value("autoWorking", false).toBool();
-    QString path = settings->value("pathToSoundFile",
-                                   QString(DEFAULT_SOUND)).toString();
-    QByteArray geometry = settings->value("windowGeometry").toByteArray();
-    QString lang = settings->value("language", "en").toString();
-    bool onTop = settings->value("alwaysOnTop", true).toBool();
-    if(apply) {
-        emit newSettings(work, pause, bigPause,
-                         autoWorking, path, onTop, geometry, lang, false);
-    } else {
-        emit gotSettings(work, pause, bigPause,
-                         autoWorking, path, onTop, lang);
-    }
+    QSettings *settings = newSettings();
+    struct options *ret = new struct options;
+    ret->autoWorking = settings->value("autoWorking", false).toBool();
+    ret->autoZero = settings->value("autoZero", true).toBool();
+    ret->bigPause = settings->value("bigPauseTime", 15).toInt();
+    ret->language = settings->value("language", "en").toString();
+    ret->onTop = settings->value("alwaysOnTop", true).toBool();
+    ret->path = settings->value("pathToSoundFile", QString(DEFAULT_SOUND)).toString();
+    ret->pause = settings->value("pauseTime", 5).toInt();
+    ret->work = settings->value("workingTime", 25).toInt();
     delete settings;
+    return ret;
 }
 
 // Move the main window (only in window moving state)
@@ -135,35 +140,6 @@ void Win::mouseReleaseEvent(QMouseEvent *event)
     if(event->button() == Qt::LeftButton && moving) {
         moving = false;
     }
-}
-
-// If changing default settings/settings' names here, change them in getSettings() too
-void Win::saveSettings(int work, int pause, int bigPause, bool autoWorking, QString filePath,
-                       bool onTop, QString lang)
-{
-    QSettings *settings = new QSettings("rtkt", "Pomodoro", this);
-    if(settings->value("workingTime", 25).toInt() != work) {
-        settings->setValue("workingTime", work);
-    }
-    if(settings->value("pauseTime", 5).toInt() != pause) {
-        settings->setValue("pauseTime", pause);
-    }
-    if(settings->value("bigPauseTime", 15).toInt() != bigPause) {
-        settings->setValue("bigPauseTime", bigPause);
-    }
-    if(settings->value("autoWorking", false).toBool() != autoWorking) {
-        settings->setValue("autoWorking", autoWorking);
-    }
-    if(settings->value("pathToSoundFile", QString(DEFAULT_SOUND)).toString() != filePath) {
-        settings->setValue("pathToSoundFile", filePath);
-    }
-    if(settings->value("language", "en").toString() != lang) {
-        settings->setValue("language", lang);
-    }
-    if(settings->value("alwaysOnTop", true).toBool() != onTop) {
-        settings->setValue("alwaysOnTop", onTop);
-    }
-    delete settings;
 }
 
 void Win::onError()
@@ -230,38 +206,25 @@ void Win::onPlayerError(QMediaPlayer::Error error)
     }
 }
 
-void Win::onSetup(int work, int pause, int bigPause, bool autoWorking,
-                  QString filePath, bool onTop, QByteArray geometry, QString lang, bool save)
+void Win::onSetLang(QString lang)
 {
-    if(save) {
-        saveSettings(work, pause, bigPause, autoWorking, filePath, onTop, lang);
+    if(currentLang != "en") {
+        qApp->removeTranslator(&translator);
     }
-
-    if(init) {
-        if(geometry != QByteArray()) {
-            restoreGeometry(geometry);
-        }
-        if(onTop) {
-            setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-        } else {
-            setWindowFlags(Qt::FramelessWindowHint);
-        }
-        init = false;
+    if(lang != "en") {
+        translator.load(lang, LANG_PATH);
+        qApp->installTranslator(&translator);
     }
-    player->setMedia(QUrl::fromLocalFile(filePath));
-
-
-    if(lang != currentLang) {
-        if(currentLang != "en") {
-            qApp->removeTranslator(&translator);
-        }
-        if(lang != "en") {
-            translator.load(lang, LANG_PATH);
-            qApp->installTranslator(&translator);
-        }
-        ui->retranslateUi(this);
-        currentLang = lang;
-    }
+    ui->retranslateUi(this);
+    exitAction->disconnect();
+    settingsAction->disconnect();
+    trayIcon->disconnect();
+    delete exitAction;
+    delete settingsAction;
+    delete trayIconMenu;
+    delete trayIcon;
+    createTrayIcon();
+    currentLang = lang;
 }
 
 void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)
@@ -322,4 +285,18 @@ void Win::onTimeout(int count)
 void Win::onZeroCount()
 {
     ui->Count->setText(QString::number(0) + tr(" pomodoro(s)"));
+}
+
+void Win::setup()
+{
+    options *st = getSettings();
+    emit setAutoWorking(st->autoWorking);
+    emit setAutoZero(st->autoZero);
+    emit setBigPauseTime(st->bigPause);
+    emit setLang(st->language);
+    emit setOnTop(st->onTop);
+    emit setPath(st->path);
+    emit setPauseTime(st->pause);
+    emit setWorkTime(st->work);
+    delete st;
 }

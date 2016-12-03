@@ -11,28 +11,27 @@ void Timer::onClick()
 }
 
 // Apply settings
-void Timer::onSetup(int work, int pause, int bigPause,
-                    bool autoWorking, QString filePath,
-                    bool onTop, QByteArray geometry, QString lang, bool save)
-{
-    if(this->work != work || this->pause != pause || this->bigPause != bigPause) {
-        if(st != TIMER_IDLE) {
-            stop(false);
-        }
-        this->work = work;
-        this->pause = pause;
-        this->bigPause = bigPause;
-    }
-    if(this->autoWorking != autoWorking) {
-        this->autoWorking = autoWorking;
-    }
+//void Timer::onSetup(int work, int pause, int bigPause,
+//                    bool autoWorking, QString filePath,
+//                    bool onTop, QByteArray geometry, QString lang, bool autoZero, bool save)
+//{
+//    if(this->work != work || this->pause != pause || this->bigPause != bigPause) {
+//        if(st != TIMER_IDLE) {
+//            stop(false);
+//        }
+//        this->work = work;
+//        this->pause = pause;
+//        this->bigPause = bigPause;
+//    }
+//    this->autoWorking = autoWorking;
+//    this->autoZero = autoZero;
 
-    (void)filePath;
-    (void)onTop;
-    (void)save;
-    (void)geometry;
-    (void)lang;
-}
+//    (void)filePath;
+//    (void)onTop;
+//    (void)save;
+//    (void)geometry;
+//    (void)lang;
+//}
 
 // Choose the mode and start
 void Timer::start(bool pause)
@@ -42,8 +41,10 @@ void Timer::start(bool pause)
         return;
     }
 
-    killTimer(timerId);
-    relaxing = false;
+    if(autoZero && relaxing) {
+        killTimer(timerId);
+        relaxing = false;
+    }
 
     if(pause == false) {
         st = TIMER_WORKING;
@@ -88,7 +89,7 @@ void Timer::stop(bool autoStopped)
 // That's a tick function
 void Timer::timerEvent(QTimerEvent *event)
 {
-    if(relaxing) {
+    if(relaxing && autoZero) {
         stop(false);
         killTimer(timerId);
         return;

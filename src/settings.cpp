@@ -22,11 +22,6 @@ Settings::Settings(QWidget *parent) :
 
     ui->fileBtn->setIcon(QIcon::fromTheme("document-open", QIcon(QString(ICONS_PATH) + "/file_open.png")));
 
-    connect(win, SIGNAL(gotSettings(int,int,int,bool,QString,bool,QString)),
-            SLOT(gotSettings(int,int,int,bool,QString,bool,QString)));
-    connect(this, SIGNAL(changedSettings(int,int,int,bool,QString,bool,QByteArray,QString,bool)),
-            win, SIGNAL(newSettings(int,int,int,bool,QString,bool,QByteArray,QString,bool)));
-    connect(this, SIGNAL(getSettings(bool)), win, SLOT(getSettings(bool)));
     connect(ui->buttonBox, SIGNAL(accepted()), SLOT(accepted()));
     connect(ui->buttonBox, &QDialogButtonBox::rejected, [=]() {
         close();
@@ -41,9 +36,17 @@ Settings::Settings(QWidget *parent) :
         setDesc(time, ui->bigPauseText);
     });
     connect(ui->fileBtn, &QPushButton::clicked, this, &Settings::selectFile);
+    connect(this, SIGNAL(setAutoWorking(bool)), win, SIGNAL(setAutoWorking(bool)));
+    connect(this, SIGNAL(setAutoZero(bool)), win, SIGNAL(setAutoZero(bool)));
+    connect(this, SIGNAL(setBigPauseTime(int)), win, SIGNAL(setBigPauseTime(int)));
+    connect(this, SIGNAL(setLang(QString)), win, SIGNAL(setLang(QString)));
+    connect(this, SIGNAL(setOnTop(bool)), win, SIGNAL(setOnTop(bool)));
+    connect(this, SIGNAL(setPath(QString)), win, SIGNAL(setPath(QString)));
+    connect(this, SIGNAL(setPauseTime(int)), win, SIGNAL(setPauseTime(int)));
+    connect(this, SIGNAL(setWorkTime(int)), win, SIGNAL(setWorkTime(int)));
 
     populateLangs();
-    emit getSettings(false);
+    setup();
 }
 
 Settings::~Settings()
@@ -51,48 +54,45 @@ Settings::~Settings()
     delete ui;
 }
 
-// Do we need to save settings before closing?
 void Settings::accepted()
 {
-    if(work != ui->work->value() || pause != ui->pause->value() ||
-            bigPause != ui->bigPause->value() ||
-            autoWorking != ui->autoStart->isChecked() ||
-            filePath != ui->file->text() ||
-            onTop != ui->onTop->isChecked() ||
-            lang != ui->language->currentText()) {
-        emit changedSettings(ui->work->value(), ui->pause->value(),
-                             ui->bigPause->value(), ui->autoStart->isChecked(),
-                             ui->file->text(), ui->onTop->isChecked(), QByteArray(),
-                             ui->language->currentText(), true);
+    QSettings *settings = win->newSettings();
+    if(autoWorking != ui->autoStart->isChecked()) {
+        emit setAutoWorking(ui->autoStart->isChecked());
+        settings->setValue("autoWorking", ui->autoStart->isChecked());
     }
+    if(autoZero != ui->autoZero->isChecked()) {
+        emit setAutoZero(ui->autoZero->isChecked());
+        settings->setValue("autoZero", ui->autoZero->isChecked());
+    }
+    if(bigPause != ui->bigPause->value()) {
+        emit setBigPauseTime(ui->bigPause->value());
+        settings->setValue("bigPauseTime", ui->bigPause->value());
+    }
+    if(filePath != ui->file->text()) {
+        emit setPath(ui->file->text());
+        settings->setValue("pathToSound", ui->file->text());
+    }
+    if(lang != ui->language->currentText()) {
+        emit setLang(ui->language->currentText());
+        settings->setValue("language", ui->language->currentText());
+    }
+    if(onTop != ui->onTop->isChecked()) {
+        emit setOnTop(ui->onTop->isChecked());
+        settings->setValue("alwaysOnTop", ui->onTop->isChecked());
+    }
+    if(pause != ui->pause->value()) {
+        emit setPauseTime(ui->pause->value());
+        settings->setValue("pauseTime", ui->pause->value());
+    }
+    if(work != ui->work->value()) {
+        emit setWorkTime(ui->work->value());
+        settings->setValue("workingTime", ui->work->value());
+    }
+    delete settings;
     close();
 }
 
-
-// We got signal 'gotSettings()' and we need to see what's in...
-void Settings::gotSettings(int work, int pause, int bigPause, bool autoWorking,
-                           QString filePath, bool onTop, QString lang)
-{
-    this->work = work;
-    this->pause = pause;
-    this->bigPause = bigPause;
-    this->autoWorking = autoWorking;
-    this->filePath = filePath;
-    this->onTop = onTop;
-    this->lang = lang;
-
-    ui->work->setValue(work);
-    ui->pause->setValue(pause);
-    ui->bigPause->setValue(bigPause);
-    ui->autoStart->setChecked(autoWorking);
-    ui->file->setText(filePath);
-    ui->onTop->setChecked(onTop);
-    ui->language->setCurrentText(lang);
-
-    setDesc(ui->work->value(), ui->workText);
-    setDesc(ui->pause->value(), ui->pauseText);
-    setDesc(ui->bigPause->value(), ui->bigPauseText);
-}
 
 void Settings::populateLangs()
 {
@@ -123,7 +123,29 @@ void Settings::selectFile()
     }
 }
 
-void Settings::setDesc(int val, QLabel *label)
+void Settings::setup()
 {
-    label->setText(QString::number(val) + tr(" minute(s)"));
+    Win::options *st = win->getSettings();
+    autoWorking = st->autoWorking;
+    autoZero = st->autoZero;
+    bigPause = st->bigPause;
+    filePath = st->path;
+    lang = st->language;
+    onTop = st->onTop;
+    pause = st->pause;
+    work = st->work;
+    delete st;
+
+    ui->autoStart->setChecked(autoWorking);
+    ui->autoZero->setChecked(autoZero);
+    ui->bigPause->setValue(bigPause);
+    ui->file->setText(filePath);
+    ui->language->setCurrentText(lang);
+    ui->onTop->setChecked(onTop);
+    ui->pause->setValue(pause);
+    ui->work->setValue(work);
+
+    setDesc(ui->work->value(), ui->workText);
+    setDesc(ui->pause->value(), ui->pauseText);
+    setDesc(ui->bigPause->value(), ui->bigPauseText);
 }

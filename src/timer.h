@@ -11,8 +11,9 @@ class Timer : public QObject
     int work;
     int pause;
     int bigPause;
-    bool autoWorking = false;
+    bool autoWorking;
     bool relaxing = false; // Are we relaxing after pause?
+    bool autoZero;
     int count = 0;
     int minutes;
     int seconds;
@@ -28,8 +29,14 @@ public:
 
 public slots:
     void onClick();
-    void onSetup(int work, int pause, int bigPause, bool autoWorking,
-                 QString filePath, bool onTop, QByteArray geometry, QString lang, bool save);
+    inline void setWorkTime(int time) {stop(true); work = time;}
+    inline void setPauseTime(int time) {stop(true); pause = time;}
+    inline void setBigPauseTime(int time) {stop(true); bigPause = time;}
+    inline void setAutoWorking(bool val) {autoWorking = val;}
+    inline void setAutoZero(bool val) {autoZero = val;}
+
+//    void onSetup(int work, int pause, int bigPause, bool autoWorking,
+//                 QString filePath, bool onTop, QByteArray geometry, QString lang, bool autoZero, bool save);
 
 signals:
     void tick(int minutes, int seconds);

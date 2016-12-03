@@ -25,30 +25,31 @@ private:
     int work;
     int pause;
     int bigPause;
-    bool autoWorking;
     QString filePath;
-    bool onTop;
     QString lang;
+    bool autoWorking;
+    bool autoZero;
+    bool onTop;
     const QStringList audio_filetypes = {"*.mp3","*.ogg","*.wav","*.wma",
                                          "*.m4a","*.aac","*.ac3","*.ape",
                                          "*.flac","*.ra","*.mka"};
     void populateLangs();
-    void setDesc(int val, QLabel *label);
+    void setup();
+    inline void setDesc(int val, QLabel *label) {label->setText(QString::number(val) + tr(" minute(s)"));}
 
 public slots:
     void selectFile();
-    void gotSettings(int work, int pause, int bigPause,
-                     bool autoWorking, QString filePath,
-                     bool onTop, QString lang);
     void accepted();
 
 signals:
-    void changedSettings(int work, int pause, int bigPause,
-                         bool autoWorking, QString filePath,
-                         bool onTop, QByteArray geom,
-                         QString lang, bool save);
-    void getSettings(bool apply);
-    void checkFile(QString path);
+    void setAutoWorking(bool val);
+    void setAutoZero(bool val);
+    void setBigPauseTime(int time);
+    void setLang(QString lang);
+    void setOnTop(bool val);
+    void setPath(QString path);
+    void setPauseTime(int time);
+    void setWorkTime(int time);
 };
 
 #endif // SETTINGS_H
