@@ -39,6 +39,7 @@ public:
 
     inline QSettings* newSettings() {return new QSettings("rtkt", "pomodoro");}
     QTranslator translator;
+    QTranslator qtTranslator;
 
     struct Win::options* getSettings();
 

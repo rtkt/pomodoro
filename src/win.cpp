@@ -3,6 +3,7 @@
 
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QLibraryInfo>
 #include <QMessageBox>
 #include <QSettings>
 
@@ -95,7 +96,7 @@ struct Win::options* Win::getSettings()
     ret->autoWorking = settings->value("autoWorking", false).toBool();
     ret->autoZero = settings->value("autoZero", true).toBool();
     ret->bigPause = settings->value("bigPauseTime", 15).toInt();
-    ret->language = settings->value("language", "en").toString();
+    ret->language = settings->value("language", "auto").toString();
     ret->onTop = settings->value("alwaysOnTop", true).toBool();
     ret->path = settings->value("pathToSoundFile", QString(DEFAULT_SOUND)).toString();
     ret->pause = settings->value("pauseTime", 5).toInt();
@@ -199,14 +200,22 @@ void Win::onPlayerError(QMediaPlayer::Error error)
 
 void Win::onSetLang(QString lang)
 {
+    if(lang == "auto") {
+        lang = QLocale::system().name();
+    }
+
     if(currentLang != "en") {
         qApp->removeTranslator(&translator);
+        qApp->removeTranslator(&qtTranslator);
     }
     if(lang != "en") {
         translator.load(lang, LANG_PATH);
         qApp->installTranslator(&translator);
+        qtTranslator.load(QString("qt_%0").arg(lang), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+        qApp->installTranslator(&qtTranslator);
     }
     ui->retranslateUi(this);
+
     exitAction->disconnect();
     settingsAction->disconnect();
     trayIcon->disconnect();
@@ -215,6 +224,7 @@ void Win::onSetLang(QString lang)
     delete trayIconMenu;
     delete trayIcon;
     createTrayIcon();
+
     currentLang = lang;
 }
 

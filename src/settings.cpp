@@ -102,6 +102,7 @@ void Settings::populateLangs()
     QFileInfoList flist;
     flist = root.entryInfoList({"*.qm"}, QDir::Files);
     // add the languages to the combo box
+    ui->language->addItem("auto");
     ui->language->addItem("en");
     for(auto &i : flist)
     {
