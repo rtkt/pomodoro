@@ -31,13 +31,6 @@ Win::Win(QWidget *parent) :
 
     createTrayIcon();
 
-
-    QSettings *settings = newSettings();
-    if(settings->value("windowGeometry", QByteArray()).toByteArray() != QByteArray()) {
-        restoreGeometry(settings->value("windowGeometry").toByteArray());
-    }
-    delete settings;
-
     setup();
 }
 
@@ -83,8 +76,6 @@ void Win::createTrayIcon()
         settingsWin->show();
     });
     connect(exitAction, &QAction::triggered, [=]() {
-        QSettings s("rtkt", "Pomodoro");
-        s.setValue("windowGeometry", saveGeometry());
         QCoreApplication::exit();
     });
 }
