@@ -29,9 +29,9 @@ public:
 
 public slots:
     void onClick();
-    inline void setWorkTime(int time) {stop(true); work = time;}
-    inline void setPauseTime(int time) {stop(true); pause = time;}
-    inline void setBigPauseTime(int time) {stop(true); bigPause = time;}
+    void setWorkTime(int time);
+    void setPauseTime(int time);
+    void setBigPauseTime(int time);
     inline void setAutoWorking(bool val) {autoWorking = val;}
     inline void setAutoZero(bool val) {autoZero = val;}
 

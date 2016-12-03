@@ -10,28 +10,38 @@ void Timer::onClick()
     }
 }
 
-// Apply settings
-//void Timer::onSetup(int work, int pause, int bigPause,
-//                    bool autoWorking, QString filePath,
-//                    bool onTop, QByteArray geometry, QString lang, bool autoZero, bool save)
-//{
-//    if(this->work != work || this->pause != pause || this->bigPause != bigPause) {
-//        if(st != TIMER_IDLE) {
-//            stop(false);
-//        }
-//        this->work = work;
-//        this->pause = pause;
-//        this->bigPause = bigPause;
-//    }
-//    this->autoWorking = autoWorking;
-//    this->autoZero = autoZero;
+void Timer::setBigPauseTime(int time)
+{
+    if(st != TIMER_IDLE)
+        stop(true);
+    else {
+        count = 0;
+        emit zeroCount();
+    }
+    bigPause = time;
+}
 
-//    (void)filePath;
-//    (void)onTop;
-//    (void)save;
-//    (void)geometry;
-//    (void)lang;
-//}
+void Timer::setPauseTime(int time)
+{
+    if(st != TIMER_IDLE)
+        stop(true);
+    else {
+        count = 0;
+        emit zeroCount();
+    }
+    pause = time;
+}
+
+void Timer::setWorkTime(int time)
+{
+    if(st != TIMER_IDLE)
+        stop(true);
+    else {
+        count = 0;
+        emit zeroCount();
+    }
+    work = time;
+}
 
 // Choose the mode and start
 void Timer::start(bool pause)
@@ -91,6 +101,7 @@ void Timer::timerEvent(QTimerEvent *event)
 {
     if(relaxing && autoZero) {
         stop(false);
+        relaxing = false;
         killTimer(timerId);
         return;
     }
