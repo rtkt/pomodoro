@@ -129,5 +129,9 @@ Select another file?</source>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
+    <message>
+        <source>Zero out counter after some non-activity</source>
+        <translation>Обнулять счётчик после бездействия</translation>
+    </message>
 </context>
 </TS>
