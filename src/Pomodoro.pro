@@ -21,16 +21,28 @@ UI_DIR = $${DESTDIR}/ui
 TRANSLATIONS_COMPILED = $$TRANSLATIONS
 TRANSLATIONS_COMPILED ~= s/\.ts/.qm/g
 
-isEmpty(PREFIX):PREFIX=/usr/local
-isEmpty(APPDIR):APPDIR=$$PREFIX/share/applications
-isEmpty(ICONDIR):ICONDIR=$$PREFIX/share/pixmaps
-isEmpty(BINDIR):BINDIR=$$PREFIX/bin
-isEmpty(FILESDIR):FILESDIR=$$PREFIX/share/$$TARGET
-isEmpty(SOUNDFILE):SOUNDFILE=$$FILESDIR/bell.ogg
+!win32 {
+    isEmpty(PREFIX):PREFIX=/usr/local
+    isEmpty(APPDIR):APPDIR=$$PREFIX/share/applications
+    isEmpty(LOGODIR):LOGODIR=$$PREFIX/share/pixmaps
+    isEmpty(ICONDIR):ICONDIR=$$PREFIX/share/pixmaps/$$TARGET
+    isEmpty(BINDIR):BINDIR=$$PREFIX/bin
+    isEmpty(FILESDIR):FILESDIR=$$PREFIX/share/$$TARGET
+    isEmpty(SOUNDFILE):SOUNDFILE=$$FILESDIR/bell.ogg
+}
+
+win32 {
+    isEmpty(PREFIX):PREFIX=.
+    isEmpty(ICONDIR):ICONDIR=$$PREFIX/media
+    isEmpty(BINDIR):BINDIR=$$PREFIX
+    isEmpty(FILESDIR):FILESDIR=$$PREFIX/media
+    isEmpty(SOUNDFILE):SOUNDFILE=$$FILESDIR/bell.ogg
+    INSTALLS -= logo desktop
+}
 
 target.path = $$BINDIR
-logo.path = $$ICONDIR
-icons.path = $$ICONDIR/$$TARGET
+logo.path = $$LOGODIR
+icons.path = $$ICONDIR
 desktop.path = $$APPDIR
 translations.path = $$FILESDIR/translations
 sound.path = $$FILESDIR
@@ -80,8 +92,9 @@ CONFIG(release_translations) {
 INSTALLS += target sound logo desktop icons
 
 DEFINES += "DEFAULT_SOUND=\\\"$$SOUNDFILE\\\"" \
-            "LANG_PATH=\\\"$$LANG_PATH\\\"" \
-            "ICONS_PATH=\\\"$$ICONDIR/$$TARGET\\\""
+#            "LANG_PATH=\\\"$$LANG_PATH\\\"" \
+            "LANG_PATH=\\\"/usr/local/share/pomodoro/translations\\\"" \
+            "ICONS_PATH=\\\"$$ICONDIR\\\""
 
 SOURCES += main.cpp\
         win.cpp \
@@ -94,6 +107,3 @@ HEADERS  += win.h \
 
 FORMS    += win.ui \
     settings.ui
-
-RESOURCES += \
-    translations.qrc
