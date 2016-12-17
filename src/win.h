@@ -55,13 +55,7 @@ private slots:
     void onIconActivation(QSystemTrayIcon::ActivationReason r);
     void onPlayerError(QMediaPlayer::Error error);
     void onSetLang(QString lang);
-    inline void onSetOnTop(bool val) {
-        if(val) {
-            setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
-        } else {
-            setWindowFlags(Qt::FramelessWindowHint);
-        }
-    }
+    void onSetOnTop(bool val);
     inline void onSetPath(QString path) {player->setMedia(QUrl::fromLocalFile(path));}
 
 signals:

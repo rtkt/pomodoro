@@ -81,10 +81,10 @@ void Timer::stop(bool autoStopped)
     timerId = 0;
     minutes = 0;
     seconds = 0;
-    if(st == TIMER_PAUSE && autoStopped) {
+    if(st == TIMER_PAUSE && autoStopped && autoZero) {
         timerId = startTimer(pause * 30 * 1000);
         relaxing = true;
-    } else if(st == TIMER_BIGPAUSE && autoStopped) {
+    } else if(st == TIMER_BIGPAUSE && autoStopped && autoZero) {
         timerId = startTimer(bigPause * 30 * 1000);
         relaxing = true;
     }

@@ -105,7 +105,12 @@ void Settings::populateLangs()
     ui->language->addItem("auto");
     ui->language->addItem("en");
     for(auto &i : flist)
-    {
+    {      
+#ifdef Q_OS_WIN
+        if(i.fileName().contains("qt_")) {
+            continue;
+        }
+#endif
         QString lang = i.fileName();
         lang.chop(3); // -  .qm
         ui->language->addItem(lang);

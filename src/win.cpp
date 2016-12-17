@@ -211,7 +211,12 @@ void Win::onSetLang(QString lang)
     if(lang != "en") {
         translator.load(lang, LANG_PATH);
         qApp->installTranslator(&translator);
+#ifndef Q_OS_WIN
         qtTranslator.load(QString("qt_%0").arg(lang), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+#endif
+#ifdef Q_OS_WIN
+        qtTranslator.load(QString("qt_%0").arg(lang), LANG_PATH);
+#endif
         qApp->installTranslator(&qtTranslator);
     }
     ui->retranslateUi(this);
@@ -226,6 +231,19 @@ void Win::onSetLang(QString lang)
     createTrayIcon();
 
     currentLang = lang;
+}
+
+void Win::onSetOnTop(bool val)
+{
+    bool isShown = !isHidden();
+    if(val) {
+        setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
+    } else {
+        setWindowFlags(Qt::FramelessWindowHint);
+    }
+    if(isShown) {
+        show();
+    }
 }
 
 void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)

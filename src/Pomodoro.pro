@@ -37,20 +37,21 @@ win32 {
     isEmpty(BINDIR):BINDIR=$$PREFIX
     isEmpty(FILESDIR):FILESDIR=$$PREFIX/media
     isEmpty(SOUNDFILE):SOUNDFILE=$$FILESDIR/bell.ogg
-    INSTALLS -= logo desktop
+
 }
 
 target.path = $$BINDIR
-logo.path = $$LOGODIR
 icons.path = $$ICONDIR
-desktop.path = $$APPDIR
 translations.path = $$FILESDIR/translations
 sound.path = $$FILESDIR
-
-logo.files = ../etc/icons/pomodoro.png
 icons.files = ../etc/icons/*
-desktop.files = ../etc/pomodoro.desktop
 sound.files = ../etc/sound/bell.ogg
+!win32 {
+    desktop.path = $$APPDIR
+    logo.path = $$LOGODIR
+    logo.files = ../etc/icons/pomodoro.png
+    desktop.files = ../etc/pomodoro.desktop
+}
 
 CONFIG(embed_translations) {
     # create translations resource file
@@ -71,7 +72,7 @@ CONFIG(install_translations) {
     translations.files = $$TRANSLATIONS_COMPILED
     INSTALLS += translations
     LANG_PATH = $$FILESDIR/translations
-    CONFIG *= update_translations release_tranlations
+    CONFIG *= update_translations release_translations
 }
 
 CONFIG(begin_translations) {
@@ -89,11 +90,11 @@ CONFIG(release_translations) {
     system($$lrelease $$_PRO_FILE_)
 }
 
-INSTALLS += target sound logo desktop icons
+!win32:INSTALLS += target sound logo desktop icons
+win32:INSTALLS += target sound icons
 
 DEFINES += "DEFAULT_SOUND=\\\"$$SOUNDFILE\\\"" \
-#            "LANG_PATH=\\\"$$LANG_PATH\\\"" \
-            "LANG_PATH=\\\"/usr/local/share/pomodoro/translations\\\"" \
+            "LANG_PATH=\\\"$$LANG_PATH\\\"" \
             "ICONS_PATH=\\\"$$ICONDIR\\\""
 
 SOURCES += main.cpp\

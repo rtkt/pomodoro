@@ -122,16 +122,16 @@ Select another file?</source>
         <translation>Файл со звуком</translation>
     </message>
     <message>
-        <source>Always on top (requires restart)</source>
-        <translation>Поверх всех окон (требует перезапуска)</translation>
-    </message>
-    <message>
         <source>Language</source>
         <translation>Язык</translation>
     </message>
     <message>
         <source>Zero out counter after some non-activity</source>
         <translation>Обнулять счётчик после бездействия</translation>
+    </message>
+    <message>
+        <source>Always on top</source>
+        <translation>Поверх всех окон</translation>
     </message>
 </context>
 </TS>
