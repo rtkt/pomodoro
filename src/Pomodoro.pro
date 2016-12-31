@@ -28,17 +28,20 @@ TRANSLATIONS_COMPILED ~= s/\.ts/.qm/g
     isEmpty(ICONDIR):ICONDIR=$$PREFIX/share/pixmaps/$$TARGET
     isEmpty(BINDIR):BINDIR=$$PREFIX/bin
     isEmpty(FILESDIR):FILESDIR=$$PREFIX/share/$$TARGET
-    isEmpty(SOUNDFILE):SOUNDFILE=$$FILESDIR/bell.ogg
 }
 
 win32 {
-    isEmpty(PREFIX):PREFIX=.
-    isEmpty(ICONDIR):ICONDIR=$$PREFIX/media
+    isEmpty(PREFIX):PREFIX=./built
+    isEmpty(FILESDIRDEFINE):FILESDIRDEFINE=./media
+    isEmpty(ICONDIRDEFINE):ICONDIRDEFINE=$$FILESDIRDEFINE
+    isEmpty(SOUNDFILEDEFINE):SOUNDFILEDEFINE=$$FILESDIRDEFINE/bell.ogg
     isEmpty(BINDIR):BINDIR=$$PREFIX
     isEmpty(FILESDIR):FILESDIR=$$PREFIX/media
-    isEmpty(SOUNDFILE):SOUNDFILE=$$FILESDIR/bell.ogg
-
+    isEmpty(ICONDIR):ICONDIR=$$FILESDIR
 }
+
+isEmpty(SOUNDFILE):SOUNDFILE=$$FILESDIR/bell.ogg
+
 
 target.path = $$BINDIR
 icons.path = $$ICONDIR
@@ -59,19 +62,16 @@ CONFIG(embed_translations) {
     for(translation, TRANSLATIONS_COMPILED):system("echo \'<file>$$translation</file>\' >> translations.qrc")
     system("echo \'</qresource></RCC>\'" >> translations.qrc)
 
-    # add file to build
     RESOURCES += translations.qrc
-
     LANG_PATH += :/translations
-
-    # make sure translations are updated and released
     CONFIG *= update_translations release_translations
 }
 
 CONFIG(install_translations) {
     translations.files = $$TRANSLATIONS_COMPILED
     INSTALLS += translations
-    LANG_PATH = $$FILESDIR/translations
+    !win32:LANG_PATH = $$FILESDIR/translations
+    win32:LANG_PATH = $$FILESDIRDEFINE/translations
     CONFIG *= update_translations release_translations
 }
 
@@ -90,12 +90,19 @@ CONFIG(release_translations) {
     system($$lrelease $$_PRO_FILE_)
 }
 
-!win32:INSTALLS += target sound logo desktop icons
-win32:INSTALLS += target sound icons
+!win32 {
+    INSTALLS += target sound logo desktop icons
+    DEFINES += "DEFAULT_SOUND=\\\"$$SOUNDFILE\\\"" \
+                "LANG_PATH=\\\"$$LANG_PATH\\\"" \
+                "ICONS_PATH=\\\"$$ICONDIR\\\""
+}
 
-DEFINES += "DEFAULT_SOUND=\\\"$$SOUNDFILE\\\"" \
-            "LANG_PATH=\\\"$$LANG_PATH\\\"" \
-            "ICONS_PATH=\\\"$$ICONDIR\\\""
+win32 {
+    INSTALLS += target sound icons
+    DEFINES += "DEFAULT_SOUND=\\\"$$SOUNDFILEDEFINE\\\"" \
+               "LANG_PATH=\\\"$$LANG_PATH\\\"" \
+               "ICONS_PATH=\\\"$$ICONDIRDEFINE\\\""
+}
 
 SOURCES += main.cpp\
         win.cpp \
