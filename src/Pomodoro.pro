@@ -102,6 +102,7 @@ win32 {
     DEFINES += "DEFAULT_SOUND=\\\"$$SOUNDFILEDEFINE\\\"" \
                "LANG_PATH=\\\"$$LANG_PATH\\\"" \
                "ICONS_PATH=\\\"$$ICONDIRDEFINE\\\""
+    RC_FILE = ../src/win_resources.rc
 }
 
 SOURCES += main.cpp\
