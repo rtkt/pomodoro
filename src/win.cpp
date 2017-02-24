@@ -13,7 +13,7 @@ Win::Win(QWidget *parent) :
 {
     ui->setupUi(this);
     player = new QMediaPlayer(this);
-    player->setVolume(100);
+//    player->setVolume(100);
 
     setWindowIcon(QIcon::fromTheme("pomodoro", QIcon(QString(ICONS_PATH) + "/pomodoro.png")));
     ui->closeBtn->setIcon(QIcon::fromTheme("window-close", QIcon(QString(ICONS_PATH) + "/button_close.png")));
@@ -28,6 +28,7 @@ Win::Win(QWidget *parent) :
     connect(this, SIGNAL(setLang(QString)), SLOT(onSetLang(QString)));
     connect(this, SIGNAL(setOnTop(bool)), SLOT(onSetOnTop(bool)));
     connect(this, SIGNAL(setPath(QString)), SLOT(onSetPath(QString)));
+    connect(this, SIGNAL(setVolume(int)), SLOT(onSetVolume(int)));
     connectTimer();
 
     createTrayIcon();
@@ -98,9 +99,10 @@ struct Win::options* Win::getSettings()
     ret->bigPause = settings->value("bigPauseTime", 15).toInt();
     ret->language = settings->value("language", "auto").toString();
     ret->onTop = settings->value("alwaysOnTop", true).toBool();
-    ret->path = settings->value("pathToSoundFile", QString(DEFAULT_SOUND)).toString();
+    ret->path = settings->value("pathToSound", QString(DEFAULT_SOUND)).toString();
     ret->pause = settings->value("pauseTime", 5).toInt();
     ret->work = settings->value("workingTime", 25).toInt();
+    ret->volume = settings->value("volume", 100).toInt();
     delete settings;
     return ret;
 }
@@ -317,5 +319,6 @@ void Win::setup()
     emit setPath(st->path);
     emit setPauseTime(st->pause);
     emit setWorkTime(st->work);
+    emit setVolume(st->volume);
     delete st;
 }

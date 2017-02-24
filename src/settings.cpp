@@ -27,13 +27,16 @@ Settings::Settings(QWidget *parent) :
         close();
     });
     connect(ui->work, &QSlider::valueChanged, [=](int time) {
-        setDesc(time, ui->workText);
+        setMinutesDesc(time, ui->workText);
     });
     connect(ui->pause, &QSlider::valueChanged, [=](int time) {
-        setDesc(time, ui->pauseText);
+        setMinutesDesc(time, ui->pauseText);
     });
     connect(ui->bigPause, &QSlider::valueChanged, [=](int time) {
-        setDesc(time, ui->bigPauseText);
+        setMinutesDesc(time, ui->bigPauseText);
+    });
+    connect(ui->volume, &QSlider::valueChanged, [=](int val) {
+       setPercentsDesc(val, ui->volumeText);
     });
     connect(ui->fileBtn, &QPushButton::clicked, this, &Settings::selectFile);
     connect(this, SIGNAL(setAutoWorking(bool)), win, SIGNAL(setAutoWorking(bool)));
@@ -44,6 +47,7 @@ Settings::Settings(QWidget *parent) :
     connect(this, SIGNAL(setPath(QString)), win, SIGNAL(setPath(QString)));
     connect(this, SIGNAL(setPauseTime(int)), win, SIGNAL(setPauseTime(int)));
     connect(this, SIGNAL(setWorkTime(int)), win, SIGNAL(setWorkTime(int)));
+    connect(this, SIGNAL(setVolume(int)), win, SIGNAL(setVolume(int)));
 
     populateLangs();
     setup();
@@ -88,6 +92,10 @@ void Settings::accepted()
     if(work != ui->work->value()) {
         emit setWorkTime(ui->work->value());
         settings->setValue("workingTime", ui->work->value());
+    }
+    if(volume != ui->volume->value()) {
+        emit setVolume(ui->volume->value());
+        settings->setValue("volume", ui->volume->value());
     }
     delete settings;
     close();
@@ -140,6 +148,7 @@ void Settings::setup()
     onTop = st->onTop;
     pause = st->pause;
     work = st->work;
+    volume = st->volume;
     delete st;
 
     ui->autoStart->setChecked(autoWorking);
@@ -150,8 +159,10 @@ void Settings::setup()
     ui->onTop->setChecked(onTop);
     ui->pause->setValue(pause);
     ui->work->setValue(work);
+    ui->volume->setValue(volume);
 
-    setDesc(ui->work->value(), ui->workText);
-    setDesc(ui->pause->value(), ui->pauseText);
-    setDesc(ui->bigPause->value(), ui->bigPauseText);
+    setMinutesDesc(ui->work->value(), ui->workText);
+    setMinutesDesc(ui->pause->value(), ui->pauseText);
+    setMinutesDesc(ui->bigPause->value(), ui->bigPauseText);
+    setPercentsDesc(ui->volume->value(), ui->volumeText);
 }

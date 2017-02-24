@@ -25,6 +25,7 @@ private:
     int work;
     int pause;
     int bigPause;
+    int volume;
     QString filePath;
     QString lang;
     bool autoWorking;
@@ -35,7 +36,8 @@ private:
                                          "*.flac","*.ra","*.mka"};
     void populateLangs();
     void setup();
-    inline void setDesc(int val, QLabel *label) {label->setText(QString::number(val) + tr(" minute(s)"));}
+    inline void setMinutesDesc(int val, QLabel *label) {label->setText(QString::number(val) + tr(" minute(s)"));}
+    inline void setPercentsDesc(int val, QLabel *label) {label->setText(QString::number(val) + "%");}
 
 public slots:
     void selectFile();
@@ -50,6 +52,7 @@ signals:
     void setPath(QString path);
     void setPauseTime(int time);
     void setWorkTime(int time);
+    void setVolume(int volume);
 };
 
 #endif // SETTINGS_H

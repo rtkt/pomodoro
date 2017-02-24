@@ -35,6 +35,7 @@ public:
         QString path;
         int pause;
         int work;
+        int volume;
     };
 
     inline QSettings* newSettings() {return new QSettings("rtkt", "pomodoro");}
@@ -56,7 +57,11 @@ private slots:
     void onPlayerError(QMediaPlayer::Error error);
     void onSetLang(QString lang);
     void onSetOnTop(bool val);
-    inline void onSetPath(QString path) {player->setMedia(QUrl::fromLocalFile(path));}
+    inline void onSetPath(QString path) {
+//        if(player->media() != QMediaContent()) player->setMedia(QMediaContent());
+        player->setMedia(QUrl::fromLocalFile(path));
+    }
+    inline void onSetVolume(int volume) {player->setVolume(volume);}
 
 signals:
     void setAutoWorking(bool val);
@@ -67,6 +72,7 @@ signals:
     void setPath(QString path);
     void setPauseTime(int time);
     void setWorkTime(int time);
+    void setVolume(int volume);
 
 private:
     Ui::Win *ui;
