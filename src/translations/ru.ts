@@ -142,16 +142,8 @@ Select another file?</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Длительность перерывов.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Duration of big pauses&lt;/p&gt;&lt;p&gt;(after every fourth completed pomodoro).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Длительность больших перерывов&lt;/p&gt;&lt;p&gt;(после каждого четвёртого завершённого помодоро).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked new pomodoros will start automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если флажок установлен, то новые помодоро будут запускаться автоматически.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Path to the file.&lt;/p&gt;&lt;p&gt;Can be relative (beginning with a dot and slash).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Путь к файлу.&lt;/p&gt;&lt;p&gt;Может быть относительным (начинающимся с точки и косой черты).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Select an alarm file.</source>
@@ -162,12 +154,20 @@ Select another file?</source>
         <translation>Если флажок установлен, то главное окно будет всегда поверх всех окон.</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a language.&lt;/p&gt;&lt;p&gt;If set to &apos;auto&apos; (default), program will set its language automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбрать язык.&lt;/p&gt;&lt;p&gt;Если установлено &apos;auto&apos; (по умолчанию), то программа будет автоматически подбирать язык.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Duration of big pauses (after every fourth completed pomodoro).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Длительность больших перерывов (после каждого четвёртого завершённого помодоро).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked pomodoro counter will zero out after some inactivity&lt;/p&gt;&lt;p&gt;(half of last pause&apos;s time).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если флажок установлен, то счётчик помодоро будет обнуляться после периода бездействия&lt;/p&gt;&lt;p&gt;(половина времени последнего перерыва).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked pomodoro counter will zero out after some inactivity (half of last pause&apos;s time).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если флажок установлен, то счётчик помодоро будет обнуляться после.периода бездействия (половина последней паузы).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Path to the file. Can be relative (beginning with a dot and slash).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Путь к файлу. Может быть относительным (начинающимся с точки и косой черты).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a language. If set to &apos;auto&apos; (default), program will set its language automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбрать язык. Если установлено &apos;auto&apos; (по умолчанию), программа будет устанавливать язык автоматически.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 </TS>

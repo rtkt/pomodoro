@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>340</height>
+    <height>350</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>300</width>
-    <height>340</height>
+    <height>350</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -82,7 +82,7 @@
    <item row="2" column="1">
     <widget class="QSpinBox" name="bigPause">
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Duration of big pauses&lt;/p&gt;&lt;p&gt;(after every fourth completed pomodoro).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Duration of big pauses (after every fourth completed pomodoro).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="suffix">
       <string> minutes</string>
@@ -111,7 +111,7 @@
    <item row="3" column="1">
     <widget class="QCheckBox" name="autoZero">
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked pomodoro counter will zero out after some inactivity&lt;/p&gt;&lt;p&gt;(half of last pause's time).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked pomodoro counter will zero out after some inactivity (half of last pause's time).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string/>
@@ -152,7 +152,7 @@
      </property>
      <widget class="QLineEdit" name="file">
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Path to the file.&lt;/p&gt;&lt;p&gt;Can be relative (beginning with a dot and slash).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Path to the file. Can be relative (beginning with a dot and slash).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QPushButton" name="fileBtn">
@@ -225,6 +225,9 @@
       <property name="text">
        <string/>
       </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
      </widget>
     </widget>
    </item>
@@ -258,7 +261,7 @@
    <item row="8" column="1">
     <widget class="QComboBox" name="language">
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a language.&lt;/p&gt;&lt;p&gt;If set to 'auto' (default), program will set its language automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a language. If set to 'auto' (default), program will set its language automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>
