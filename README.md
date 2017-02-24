@@ -2,9 +2,9 @@
 Simple pomodoro timer
 
 ## Compatibility
-Either Windows (not tested on all Windows versions, just my Win10) or a decent Linux should be fine.  
+Either Windows or a decent Linux should be fine.  
 It should work on OS X also but I can't port my app to it since I don't have neither hackintosh nor real mac.  
-This app depends on Qt so make sure it is installed.
+This app depends on external codecs to play an alarm file so make sure they're installed.
 
 ## Features
 1. Tray integration
