@@ -26,15 +26,6 @@ Settings::Settings(QWidget *parent) :
     connect(ui->buttonBox, &QDialogButtonBox::rejected, [=]() {
         close();
     });
-    connect(ui->work, &QSlider::valueChanged, [=](int time) {
-        setMinutesDesc(time, ui->workText);
-    });
-    connect(ui->pause, &QSlider::valueChanged, [=](int time) {
-        setMinutesDesc(time, ui->pauseText);
-    });
-    connect(ui->bigPause, &QSlider::valueChanged, [=](int time) {
-        setMinutesDesc(time, ui->bigPauseText);
-    });
     connect(ui->volume, &QSlider::valueChanged, [=](int val) {
        setPercentsDesc(val, ui->volumeText);
     });
@@ -161,8 +152,5 @@ void Settings::setup()
     ui->work->setValue(work);
     ui->volume->setValue(volume);
 
-    setMinutesDesc(ui->work->value(), ui->workText);
-    setMinutesDesc(ui->pause->value(), ui->pauseText);
-    setMinutesDesc(ui->bigPause->value(), ui->bigPauseText);
     setPercentsDesc(ui->volume->value(), ui->volumeText);
 }

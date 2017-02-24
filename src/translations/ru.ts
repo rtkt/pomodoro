@@ -7,28 +7,12 @@
         <source>Select an audio file</source>
         <translation>Выберите аудиофайл</translation>
     </message>
-    <message>
-        <source> minute(s)</source>
-        <translation> минут(ы)</translation>
-    </message>
 </context>
 <context>
     <name>Win</name>
     <message>
         <source>Pomodoro timer</source>
         <translation>Pomodoro таймер</translation>
-    </message>
-    <message>
-        <source>0 pomodoros</source>
-        <translation>0 помодоро</translation>
-    </message>
-    <message>
-        <source>Start</source>
-        <translation>Старт</translation>
-    </message>
-    <message>
-        <source>00:00</source>
-        <translation>00:00</translation>
     </message>
     <message>
         <source>Stopped</source>
@@ -45,14 +29,6 @@
     <message>
         <source>Something went wrong...</source>
         <translation>Что-то пошло не так...</translation>
-    </message>
-    <message>
-        <source>Stop</source>
-        <translation>Остановить</translation>
-    </message>
-    <message>
-        <source> pomodoro(s)</source>
-        <translation> помодоро</translation>
     </message>
     <message>
         <source>Error</source>
@@ -94,6 +70,22 @@ Select another file?</source>
         <source>Big break</source>
         <translation>Большой перерыв</translation>
     </message>
+    <message>
+        <source>0 pomodoro(s)</source>
+        <translation>0 помодоро</translation>
+    </message>
+    <message>
+        <source>pomodoro(s)</source>
+        <translation>помодоро</translation>
+    </message>
+    <message>
+        <source>Toggle timer</source>
+        <translation>Включить/выключить таймер</translation>
+    </message>
+    <message>
+        <source>Close this window</source>
+        <translation>Закрыть это окно</translation>
+    </message>
 </context>
 <context>
     <name>settings</name>
@@ -132,6 +124,50 @@ Select another file?</source>
     <message>
         <source>Always on top</source>
         <translation>Поверх всех окон</translation>
+    </message>
+    <message>
+        <source>Volume</source>
+        <translation>Громкость</translation>
+    </message>
+    <message>
+        <source> minutes</source>
+        <translation> минут</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Duration of pomodoros.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Длительность помодоро.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Duration of pauses.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Длительность перерывов.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Duration of big pauses&lt;/p&gt;&lt;p&gt;(after every fourth completed pomodoro).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Длительность больших перерывов&lt;/p&gt;&lt;p&gt;(после каждого четвёртого завершённого помодоро).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked new pomodoros will start automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если флажок установлен, то новые помодоро будут запускаться автоматически.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Path to the file.&lt;/p&gt;&lt;p&gt;Can be relative (beginning with a dot and slash).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Путь к файлу.&lt;/p&gt;&lt;p&gt;Может быть относительным (начинающимся с точки и косой черты).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Select an alarm file.</source>
+        <translation>Выбрать звуковой файл.</translation>
+    </message>
+    <message>
+        <source>If checked the main window will be always on top.</source>
+        <translation>Если флажок установлен, то главное окно будет всегда поверх всех окон.</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select a language.&lt;/p&gt;&lt;p&gt;If set to &apos;auto&apos; (default), program will set its language automatically.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбрать язык.&lt;/p&gt;&lt;p&gt;Если установлено &apos;auto&apos; (по умолчанию), то программа будет автоматически подбирать язык.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked pomodoro counter will zero out after some inactivity&lt;/p&gt;&lt;p&gt;(half of last pause&apos;s time).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Если флажок установлен, то счётчик помодоро будет обнуляться после периода бездействия&lt;/p&gt;&lt;p&gt;(половина времени последнего перерыва).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 </TS>

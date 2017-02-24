@@ -57,10 +57,7 @@ private slots:
     void onPlayerError(QMediaPlayer::Error error);
     void onSetLang(QString lang);
     void onSetOnTop(bool val);
-    inline void onSetPath(QString path) {
-//        if(player->media() != QMediaContent()) player->setMedia(QMediaContent());
-        player->setMedia(QUrl::fromLocalFile(path));
-    }
+    inline void onSetPath(QString path) {player->setMedia(QUrl::fromLocalFile(path));}
     inline void onSetVolume(int volume) {player->setVolume(volume);}
 
 signals:

@@ -36,7 +36,6 @@ private:
                                          "*.flac","*.ra","*.mka"};
     void populateLangs();
     void setup();
-    inline void setMinutesDesc(int val, QLabel *label) {label->setText(QString::number(val) + tr(" minute(s)"));}
     inline void setPercentsDesc(int val, QLabel *label) {label->setText(QString::number(val) + "%");}
 
 public slots:

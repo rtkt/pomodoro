@@ -13,15 +13,16 @@ Win::Win(QWidget *parent) :
 {
     ui->setupUi(this);
     player = new QMediaPlayer(this);
-//    player->setVolume(100);
 
     setWindowIcon(QIcon::fromTheme("pomodoro", QIcon(QString(ICONS_PATH) + "/pomodoro.png")));
-    ui->closeBtn->setIcon(QIcon::fromTheme("window-close", QIcon(QString(ICONS_PATH) + "/button_close.png")));
+    ui->closeBtn->setIcon(QIcon::fromTheme("application-exit", QIcon(QString(ICONS_PATH) + "/application-exit.png")));
+    ui->toggleBtn->setIcon(QIcon::fromTheme("pomodoro", QIcon(QString(ICONS_PATH) + "/pomodoro.png")));
+    onZeroCount();
 
 //    connect(player, static_cast<void(QMediaPlayer::*)(QMediaPlayer::Error)>(&QMediaPlayer::error),
 //          this, &Win::onPlayerError);
     connect(player, SIGNAL(error(QMediaPlayer::Error)), SLOT(onPlayerError(QMediaPlayer::Error)));
-    connect(ui->Btn, SIGNAL(clicked()), &timer, SLOT(onClick()));
+    connect(ui->toggleBtn, SIGNAL(clicked()), &timer, SLOT(onClick()));
     connect(ui->closeBtn, &QPushButton::clicked, [=]() {
         close();
     });
@@ -89,7 +90,7 @@ void Win::closeEvent(QCloseEvent *event)
 }
 
 
-// Just get settings and emit a needed signal
+// Just get settings
 struct Win::options* Win::getSettings()
 {
     QSettings *settings = newSettings();
@@ -250,7 +251,6 @@ void Win::onSetOnTop(bool val)
 
 void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)
 {
-    ui->Btn->setText(tr("Stop"));
     this->minutesLeft.num = minutes;
     minutes < 10 ? this->minutesLeft.str = "0" + QString::number(minutes) :
             this->minutesLeft.str = QString::number(minutes);
@@ -272,7 +272,6 @@ void Win::onStart(enum Timer::TIMER_STATE STATE, int minutes)
 
 void Win::onStop()
 {
-    ui->Btn->setText(tr("Start"));
     ui->Msg->setText(tr("Stopped"));
     ui->Time->setText("00:00");
     minutesLeft.num = 0;
@@ -297,15 +296,10 @@ void Win::onTick(int minutes, int seconds)
 
 void Win::onTimeout(int count)
 {
-    ui->Count->setText(QString::number(count) + tr(" pomodoro(s)"));
+    ui->count->setText(QString::number(count) + tr("pomodoro(s)"));
     player->play();
     minutesLeft.num = 0;
     minutesLeft.str = "00";
-}
-
-void Win::onZeroCount()
-{
-    ui->Count->setText(QString::number(0) + tr(" pomodoro(s)"));
 }
 
 void Win::setup()
@@ -321,4 +315,9 @@ void Win::setup()
     emit setWorkTime(st->work);
     emit setVolume(st->volume);
     delete st;
+}
+
+void Win::onZeroCount()
+{
+    ui->count->setText(tr("0 pomodoro(s)"));
 }
