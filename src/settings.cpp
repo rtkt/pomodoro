@@ -20,7 +20,7 @@ Settings::Settings(QWidget *parent) :
 //    Delete this window on closing
     setAttribute(Qt::WA_DeleteOnClose);
 
-    ui->fileBtn->setIcon(QIcon::fromTheme("document-open", QIcon(QString(ICONS_PATH) + "/file_open.png")));
+    ui->fileBtn->setIcon(QIcon::fromTheme("document-open", QIcon(QString(ICONS_PATH) + "/document-open.png")));
 
     connect(ui->buttonBox, SIGNAL(accepted()), SLOT(accepted()));
     connect(ui->buttonBox, &QDialogButtonBox::rejected, [=]() {
@@ -104,12 +104,7 @@ void Settings::populateLangs()
     ui->language->addItem("auto");
     ui->language->addItem("en");
     for(auto &i : flist)
-    {      
-#ifdef Q_OS_WIN
-        if(i.fileName().contains("qt_")) {
-            continue;
-        }
-#endif
+    {
         QString lang = i.fileName();
         lang.chop(3); // -  .qm
         ui->language->addItem(lang);

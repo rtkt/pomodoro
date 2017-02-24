@@ -214,12 +214,7 @@ void Win::onSetLang(QString lang)
     if(lang != "en") {
         translator.load(lang, LANG_PATH);
         qApp->installTranslator(&translator);
-#ifndef Q_OS_WIN
         qtTranslator.load(QString("qt_%0").arg(lang), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-#endif
-#ifdef Q_OS_WIN
-        qtTranslator.load(QString("qt_%0").arg(lang), LANG_PATH);
-#endif
         qApp->installTranslator(&qtTranslator);
     }
     ui->retranslateUi(this);
