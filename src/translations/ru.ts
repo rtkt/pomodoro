@@ -75,16 +75,16 @@ Select another file?</source>
         <translation>0 помодоро</translation>
     </message>
     <message>
-        <source>pomodoro(s)</source>
-        <translation>помодоро</translation>
-    </message>
-    <message>
         <source>Toggle timer</source>
         <translation>Включить/выключить таймер</translation>
     </message>
     <message>
         <source>Close this window</source>
         <translation>Закрыть это окно</translation>
+    </message>
+    <message>
+        <source> pomodoro(s)</source>
+        <translation> помодоро</translation>
     </message>
 </context>
 <context>

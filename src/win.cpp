@@ -291,7 +291,7 @@ void Win::onTick(int minutes, int seconds)
 
 void Win::onTimeout(int count)
 {
-    ui->count->setText(QString::number(count) + tr("pomodoro(s)"));
+    ui->count->setText(QString::number(count) + tr(" pomodoro(s)"));
     player->play();
     minutesLeft.num = 0;
     minutesLeft.str = "00";
