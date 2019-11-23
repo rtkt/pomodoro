@@ -1,0 +1,5 @@
+src/build
+*.qm
+src/Makefile
+src/.qmake.stash
+src/Pomodoro.pro.*
